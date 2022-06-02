@@ -1,0 +1,18 @@
+[package]
+name = "cmc"
+edition = "2021"
+version = "0.1.0"
+authors = ["Dzhegash <dzhegash@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "Rust Library for the CoinMarketCap API"
+keywords = ["cryptocurrency", "market", "coinmarketcap", "price", "nft"]
+categories = ["api-bindings", "cryptography::cryptocurrencies"]
+documentation = "https://docs.rs/crate/cmc/"
+repository = "https://github.com/dzhegash/cmc"
+readme = "README.md"
+
+[dependencies]
+serde = { version = "1.0.137", features = ["derive"] }
+serde_json = { version = "1.0.81", features = ["float_roundtrip"] }
+reqwest = { version = "0.11.10", features = ["blocking", "json"] }
+thiserror = "1.0.31"
