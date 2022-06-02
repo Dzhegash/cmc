@@ -6,7 +6,8 @@
 //!```rust
 //! use cmc::Cmc;
 //!
-//! let cmc = Cmc::new("<your API key>");
+//! let cmc = Cmc::new("<API KEY>");
+//!
 //! match cmc.price("BTC") {
 //!     Ok(price) => println!("{}", price),
 //!     Err(err) => println!("Error: {}", err),
@@ -17,9 +18,13 @@
 //!```rust
 //! use cmc::{CmcBuilder, Pass};
 //!
-//! let cmc = CmcBuilder::new("<your API key>").pass(Pass::Id).build();
+//! let cmc = CmcBuilder::new("<API KEY>")
+//!     .pass(Pass::Id)
+//!     .convert("EUR")
+//!     .build();
+//!
 //! match cmc.price("1027") { // 1027 is Ethereum id.
-//!     Ok(price) => println!("{}", price),
+//!     Ok(price) => println!("{}", price), // In Euro instead default USD
 //!     Err(err) => println!("Error: {}", err),
 //! }
 //!```

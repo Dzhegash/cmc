@@ -3,6 +3,8 @@
 ### Unofficial Rust Library for the [CoinMarketCap API](https://coinmarketcap.com/api/)
 
 ![Crates.io](https://img.shields.io/crates/v/cmc)
+![docs.rs](https://img.shields.io/docsrs/cmc)
+![Crates.io](https://img.shields.io/crates/l/cmc)
 
 
 
@@ -18,19 +20,26 @@
 ### Price cryptocurrency
 ```rust
  use cmc::Cmc;
- let cmc = Cmc::new("<your api key>");
+
+ let cmc = Cmc::new("<API KEY>");
+
  match cmc.price("BTC") {
-     Ok(price) => println!("{}", price),
-     Err(err) => println!("Error: {}", err),
+    Ok(price) => println!("{}", price),
+    Err(err) => println!("Error: {}", err),
  }
 ```
  ### Price with custom settings
 ```rust
  use cmc::{CmcBuilder, Pass};
- let cmc = CmcBuilder::new("<your api key>").pass(Pass::Id).build();
+
+ let cmc = CmcBuilder::new("<API KEY>")
+ 	 .pass(Pass::Id)
+ 	 .convert("EUR")
+ 	 .build();
+
  match cmc.price("1027") { // 1027 is Ethereum id.
-     Ok(price) => println!("{}", price),
-     Err(err) => println!("Error: {}", err),
+ 	Ok(price) => println!("{}", price), // In Euro instead default USD
+ 	Err(err) => println!("Error: {}", err),
  }
 ```
 

@@ -48,11 +48,43 @@ impl CmcBuilder {
         }
     }
 
+    /// Set pass:
+    /// Id: Cryptocurrency coinmarketcap id. Example: 1027.
+    /// Slug: Alternatively pass one cryptocurrency slug. Example: "ethereum"
+    /// Symbol: Alternatively pass one cryptocurrency symbol. Example: "BTC"
+    ///
+    /// # Example:
+    /// ```rust
+    /// use cmc::{CmcBuilder, Pass};
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>").pass(Pass::Id).build();
+    /// match cmc.price("1027") { // 1027 is Ethereum id.
+    ///     Ok(price) => println!("{}", price),
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
     pub fn pass(mut self, pass: Pass) -> CmcBuilder {
         self.config.pass = pass;
         self
     }
 
+    /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat
+    /// # Example:
+    /// ```rust
+    /// use cmc::CmcBuilder;
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>").convert("EUR").build();
+    /// match cmc.price("ETH") {
+    ///     Ok(price) => println!("{}", price), // In Euro
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
+    pub fn convert<T: Into<String>>(mut self, currency: T) -> CmcBuilder {
+        self.config.currency = currency.into().to_uppercase();
+        self
+    }
+
+    /// Returns a Cmc client that uses this CmcBuilder configuration.
     pub fn build(self) -> Cmc {
         Cmc {
             api_key: self.api_key,
@@ -81,7 +113,7 @@ impl Cmc {
             .header("Accepts", "application/json")
     }
 
-    /// Latest price for cryptocurrency (Symbol).
+    /// Latest price for cryptocurrency in USD.
     /// # Examples
     ///
     /// Basic usage:
@@ -89,7 +121,7 @@ impl Cmc {
     /// ```rust
     /// use cmc::Cmc;
     ///
-    /// let cmc = Cmc::new("<your API key>");
+    /// let cmc = Cmc::new("<API KEY>");
     /// match cmc.price("BTC") {
     ///     Ok(price) => println!("{}", price),
     ///     Err(err) => println!("Error: {}", err),
@@ -112,7 +144,7 @@ impl Cmc {
     fn price_by_id(cmc: &Cmc, id: &str, currency: &str) -> CmcResult<f64> {
         let resp = cmc
             .add_endpoint("v2/cryptocurrency/quotes/latest")
-            .query(&[("id", id)])
+            .query(&[("id", id), ("convert", currency)])
             .send()?;
         match resp.status() {
             StatusCode::OK => {
@@ -140,7 +172,10 @@ impl Cmc {
     fn price_by_slug(cmc: &Cmc, slug: &str, currency: &str) -> CmcResult<f64> {
         let resp = cmc
             .add_endpoint("v2/cryptocurrency/quotes/latest")
-            .query(&[("slug", slug.to_lowercase())])
+            .query(&[
+                ("slug", slug.to_lowercase().as_str()),
+                ("convert", currency),
+            ])
             .send()?;
         match resp.status() {
             StatusCode::OK => {
@@ -169,7 +204,7 @@ impl Cmc {
     fn price_by_symbol(cmc: &Cmc, symbol: &str, currency: &str) -> CmcResult<f64> {
         let resp = cmc
             .add_endpoint("v2/cryptocurrency/quotes/latest")
-            .query(&[("symbol", symbol)])
+            .query(&[("symbol", symbol), ("convert", currency)])
             .send()?;
         match resp.status() {
             StatusCode::OK => {

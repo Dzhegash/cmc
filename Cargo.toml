@@ -1,11 +1,11 @@
 [package]
 name = "cmc"
 edition = "2021"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Dzhegash <dzhegash@gmail.com>"]
 license = "MIT OR Apache-2.0"
 description = "Rust Library for the CoinMarketCap API"
-keywords = ["cryptocurrency", "market", "coinmarketcap", "price", "nft"]
+keywords = ["cryptocurrency", "coinmarket", "coinmarketcap", "price", "nft"]
 categories = ["api-bindings", "cryptography::cryptocurrencies"]
 documentation = "https://docs.rs/crate/cmc/"
 repository = "https://github.com/dzhegash/cmc"
