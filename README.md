@@ -2,7 +2,7 @@
 
 ### Unofficial Rust Library for the [CoinMarketCap API](https://coinmarketcap.com/api/)
 
-
+https://img.shields.io/crates/v/cmc
 
 
 
