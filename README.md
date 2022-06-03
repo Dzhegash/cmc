@@ -1,13 +1,12 @@
 # cmc
 
-### Unofficial Rust Library for the [CoinMarketCap API](https://coinmarketcap.com/api/)
 
 [![Crates.io](https://img.shields.io/crates/v/cmc)](https://crates.io/crates/cmc)
 [![docs.rs](https://img.shields.io/docsrs/cmc)](https://docs.rs/crate/cmc/latest)
 [![MIT licensed](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE-MIT)
 [![Apache-2.0 licensed](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE-APACHE)
 
-
+##### Unofficial Rust Library for the [CoinMarketCap API](https://coinmarketcap.com/api/)
 
 ## Usage
 
@@ -29,7 +28,10 @@
     Err(err) => println!("Error: {}", err),
  }
 ```
+
+
  ### Price with custom settings
+
 ```rust
  use cmc::{CmcBuilder, Pass};
 
@@ -44,7 +46,7 @@
  }
 ```
 
-​	
+
 
 ## License
 

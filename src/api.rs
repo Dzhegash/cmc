@@ -48,10 +48,13 @@ impl CmcBuilder {
         }
     }
 
-    /// Set pass:
-    /// Id: Cryptocurrency coinmarketcap id. Example: 1027.
-    /// Slug: Alternatively pass one cryptocurrency slug. Example: "ethereum"
-    /// Symbol: Alternatively pass one cryptocurrency symbol. Example: "BTC"
+    /// # Set pass:
+    ///
+    /// - **Id**: Cryptocurrency coinmarketcap id. Example: 1027
+    ///
+    /// - **Slug**: Alternatively pass one cryptocurrency slug. Example: "ethereum"
+    ///
+    /// - **Symbol**: Alternatively pass one cryptocurrency symbol. Example: "BTC"
     ///
     /// # Example:
     /// ```rust
