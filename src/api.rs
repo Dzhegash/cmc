@@ -1,4 +1,6 @@
-use crate::api::cryptocurrency::quotes_latest_v2::*;
+use crate::api::cryptocurrency::api_errors::ApiError;
+use crate::api::cryptocurrency::coinmarketcap_id_map::CoinMarketCapIdMap;
+use crate::api::cryptocurrency::quotes_latest_v2::{QuotesLatestV2SlugOrId, QuotesLatestV2Symbol};
 use crate::errors::CmcErrors;
 use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
@@ -8,12 +10,19 @@ mod tests;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
+type IdMap = Vec<cryptocurrency::coinmarketcap_id_map::Cryptocurrency>;
 
 #[derive(Clone, Debug)]
 pub enum Pass {
     Id,
     Slug,
     Symbol,
+}
+
+#[derive(Clone, Debug)]
+pub enum Sort {
+    Id,
+    CmcRank,
 }
 
 #[derive(Clone, Debug)]
@@ -50,12 +59,14 @@ impl CmcBuilder {
 
     /// # Set pass:
     ///
-    /// - **Id**: Cryptocurrency coinmarketcap id. Example: 1027
+    /// - **Id**: Cryptocurrency coinmarketcap id. Example: "1027"
     ///
     /// - **Slug**: Alternatively pass one cryptocurrency slug. Example: "ethereum"
     ///
     /// - **Symbol**: Alternatively pass one cryptocurrency symbol. Example: "BTC"
     ///
+    /// **NOTE**: `CoinMarketCap recommend utilizing CMC ID instead of cryptocurrency symbols to securely identify cryptocurrencies with other endpoints and in your own application logic`
+    /// (Can be obtained using the method [id_map][id]).
     /// # Example:
     /// ```rust
     /// use cmc::{CmcBuilder, Pass};
@@ -66,12 +77,13 @@ impl CmcBuilder {
     ///     Err(err) => println!("Error: {}", err),
     /// }
     /// ```
+    /// [id]: ./struct.Cmc.html#method.id_map
     pub fn pass(mut self, pass: Pass) -> CmcBuilder {
         self.config.pass = pass;
         self
     }
 
-    /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat
+    /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat.
     /// # Example:
     /// ```rust
     /// use cmc::CmcBuilder;
@@ -114,6 +126,64 @@ impl Cmc {
             .get(format!("{}{}", CMC_API_URL, endpoint))
             .header("X-CMC_PRO_API_KEY", &self.api_key)
             .header("Accepts", "application/json")
+    }
+
+    /// Returns a mapping of all cryptocurrencies to unique CoinMarketCap ids.
+    ///
+    /// # Examples
+    ///
+    /// Parameters:
+    /// - `start` Offset the start.
+    /// - `limit` Specify the number of results to return.
+    /// - `sort` What field to sort the list of cryptocurrencies by.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::{Cmc, Sort};
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    /// let map = cmc.id_map(1, 5, Sort::Id).unwrap();
+    ///
+    /// for cc in map {
+    ///     println!(
+    ///         "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------",
+    ///         cc.id, cc.name, cc.symbol, cc.slug, cc.rank
+    ///     )
+    /// }
+    /// ```
+    pub fn id_map(&self, start: usize, limit: usize, sort: Sort) -> CmcResult<IdMap> {
+        let resp = match sort {
+            Sort::Id => self
+                .add_endpoint("v1/cryptocurrency/map")
+                .query(&[("start", start), ("limit", limit)])
+                .query(&[("sort", "id")])
+                .send()?,
+            Sort::CmcRank => self
+                .add_endpoint("v1/cryptocurrency/map")
+                .query(&[("start", start), ("limit", limit)])
+                .query(&[("sort", "cmc_rank")])
+                .send()?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CoinMarketCapIdMap>()?;
+                Ok(root.data)
+            }
+            code => {
+                let root = {
+                    match resp.json::<ApiError>() {
+                        Ok(data) => data,
+                        Err(err) => panic!("{}", err),
+                    }
+                };
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
     }
 
     /// Latest price for cryptocurrency in USD.
@@ -163,7 +233,7 @@ impl Cmc {
                 Ok(price)
             }
             code => {
-                let root = resp.json::<QuotesLatestV2error>()?;
+                let root = resp.json::<ApiError>()?;
                 Err(CmcErrors::ApiError(format!(
                     "Status Code: {}. Error message: {}",
                     code, root.status.error_message
@@ -195,7 +265,7 @@ impl Cmc {
                 Ok(price)
             }
             code => {
-                let root = resp.json::<QuotesLatestV2error>()?;
+                let root = resp.json::<ApiError>()?;
                 Err(CmcErrors::ApiError(format!(
                     "Status Code: {}. Error message: {}",
                     code, root.status.error_message
@@ -220,7 +290,7 @@ impl Cmc {
                 Ok(price)
             }
             code => {
-                let root = resp.json::<QuotesLatestV2error>()?;
+                let root = resp.json::<ApiError>()?;
                 Err(CmcErrors::ApiError(format!(
                     "Status Code: {}. Error message: {}",
                     code, root.status.error_message

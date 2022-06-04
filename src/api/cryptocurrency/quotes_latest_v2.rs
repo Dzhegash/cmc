@@ -2,24 +2,19 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct QuotesLatestV2SlugOrId {
     pub status: Status,
     pub data: HashMap<String, CryptoCurrency>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct QuotesLatestV2Symbol {
     pub status: Status,
     pub data: HashMap<String, Vec<CryptoCurrency>>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct QuotesLatestV2error {
-    pub status: StatusError,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Status {
     pub timestamp: String,
     pub error_code: i64,
@@ -29,16 +24,7 @@ pub struct Status {
     pub notice: Value,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct StatusError {
-    pub timestamp: String,
-    pub error_code: i64,
-    pub error_message: Value,
-    pub elapsed: i64,
-    pub credit_count: i64,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CryptoCurrency {
     pub id: i64,
     pub name: String,
@@ -60,14 +46,14 @@ pub struct CryptoCurrency {
     pub quote: HashMap<String, Currency>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Tag {
     pub slug: String,
     pub name: String,
     pub category: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Currency {
     pub price: f64,
     pub volume_24h: Value,
