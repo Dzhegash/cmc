@@ -172,12 +172,7 @@ impl Cmc {
                 Ok(root.data)
             }
             code => {
-                let root = {
-                    match resp.json::<ApiError>() {
-                        Ok(data) => data,
-                        Err(err) => panic!("{}", err),
-                    }
-                };
+                let root = resp.json::<ApiError>()?;
                 Err(CmcErrors::ApiError(format!(
                     "Status Code: {}. Error message: {}",
                     code, root.status.error_message
