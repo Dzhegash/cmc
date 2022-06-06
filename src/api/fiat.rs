@@ -1,0 +1,1 @@
+pub mod coinmarketcap_id_map;

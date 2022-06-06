@@ -1,4 +1,4 @@
-use crate::api::cryptocurrency::api_errors::ApiError;
+use api_errors::ApiError;
 use crate::api::cryptocurrency::coinmarketcap_id_map::CoinMarketCapIdMap;
 use crate::api::cryptocurrency::quotes_latest_v2::{QuotesLatestV2SlugOrId, QuotesLatestV2Symbol};
 use crate::errors::CmcErrors;
@@ -6,11 +6,14 @@ use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
 
 mod cryptocurrency;
+mod fiat;
 mod tests;
+pub mod api_errors;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
 type IdMap = Vec<cryptocurrency::coinmarketcap_id_map::Cryptocurrency>;
+//type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
 
 #[derive(Clone, Debug)]
 pub enum Pass {
