@@ -1,19 +1,21 @@
-use api_errors::ApiError;
-use crate::api::cryptocurrency::coinmarketcap_id_map::CoinMarketCapIdMap;
 use crate::api::cryptocurrency::quotes_latest_v2::{QuotesLatestV2SlugOrId, QuotesLatestV2Symbol};
 use crate::errors::CmcErrors;
+use api_errors::ApiError;
 use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
 
+pub mod api_errors;
 mod cryptocurrency;
 mod fiat;
 mod tests;
-pub mod api_errors;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
+
+type RootIdMap = cryptocurrency::coinmarketcap_id_map::CoinMarketCapIdMap;
 type IdMap = Vec<cryptocurrency::coinmarketcap_id_map::Cryptocurrency>;
-//type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
+type RootIdMapFiat = fiat::coinmarketcap_id_map::CoinMarketCapIdMap;
+type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
 
 #[derive(Clone, Debug)]
 pub enum Pass {
@@ -26,6 +28,12 @@ pub enum Pass {
 pub enum Sort {
     Id,
     CmcRank,
+}
+
+#[derive(Clone, Debug)]
+pub enum SortFiat {
+    Id,
+    Name,
 }
 
 #[derive(Clone, Debug)]
@@ -120,6 +128,7 @@ pub struct Cmc {
 }
 
 impl Cmc {
+    /// Constructs a new CoinMarketCap Client.
     pub fn new<T: Into<String>>(api_key: T) -> Self {
         CmcBuilder::new(api_key).build()
     }
@@ -171,7 +180,7 @@ impl Cmc {
 
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<CoinMarketCapIdMap>()?;
+                let root = resp.json::<RootIdMap>()?;
                 Ok(root.data)
             }
             code => {
@@ -286,6 +295,58 @@ impl Cmc {
                     .unwrap()
                     .price;
                 Ok(price)
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns a mapping of all supported fiat currencies to unique CoinMarketCap ids.
+    ///
+    /// # Examples
+    ///
+    /// Parameters:
+    /// - `start` Offset the start.
+    /// - `limit` Specify the number of results to return.
+    /// - `sort` What field to sort the list by.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::{Cmc, SortFiat};
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    /// let map_fiat = cmc.id_map_fiat(1, 100, SortFiat::Name).unwrap();
+    /// for f in map_fiat {
+    ///     println!(
+    ///         "Id: {}\nName: {}\nSign: {}\nSymbol: {}\n---------------",
+    ///         f.id, f.name, f.sign, f.symbol
+    ///     )
+    /// }
+    /// ```
+    pub fn id_map_fiat(&self, start: usize, limit: usize, sort: SortFiat) -> CmcResult<IdMapFiat> {
+        let resp = match sort {
+            SortFiat::Id => self
+                .add_endpoint("v1/fiat/map")
+                .query(&[("start", start), ("limit", limit)])
+                .query(&[("sort", "id")])
+                .send()?,
+            SortFiat::Name => self
+                .add_endpoint("v1/fiat/map")
+                .query(&[("start", start), ("limit", limit)])
+                .query(&[("sort", "name")])
+                .send()?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<RootIdMapFiat>()?;
+                Ok(root.data)
             }
             code => {
                 let root = resp.json::<ApiError>()?;
