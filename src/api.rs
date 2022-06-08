@@ -8,6 +8,7 @@ pub mod api_errors;
 mod cryptocurrency;
 mod fiat;
 mod tests;
+mod key;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
