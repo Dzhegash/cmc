@@ -7,8 +7,8 @@ use reqwest::StatusCode;
 pub mod api_errors;
 mod cryptocurrency;
 mod fiat;
-mod tests;
 mod key;
+mod tests;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
@@ -17,6 +17,8 @@ type RootIdMap = cryptocurrency::coinmarketcap_id_map::CoinMarketCapIdMap;
 type IdMap = Vec<cryptocurrency::coinmarketcap_id_map::Cryptocurrency>;
 type RootIdMapFiat = fiat::coinmarketcap_id_map::CoinMarketCapIdMap;
 type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
+type RootKeyInfo = key::key_info::KeyInfo;
+type KeyInfo = key::key_info::Data;
 
 #[derive(Clone, Debug)]
 pub enum Pass {
@@ -347,6 +349,23 @@ impl Cmc {
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<RootIdMapFiat>()?;
+                Ok(root.data)
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    pub fn key_info(&self) -> CmcResult<KeyInfo> {
+        let resp = self.add_endpoint("v1/key/info").send()?;
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<RootKeyInfo>()?;
                 Ok(root.data)
             }
             code => {
