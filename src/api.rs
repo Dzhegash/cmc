@@ -17,8 +17,8 @@ type RootIdMap = cryptocurrency::coinmarketcap_id_map::CoinMarketCapIdMap;
 type IdMap = Vec<cryptocurrency::coinmarketcap_id_map::Cryptocurrency>;
 type RootIdMapFiat = fiat::coinmarketcap_id_map::CoinMarketCapIdMap;
 type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
-type RootKeyInfo = key::key_info::KeyInfo;
-type KeyInfo = key::key_info::Data;
+type RootKeyInfo = key::key_info::CoinMarketCapKeyInfo;
+type KeyInfo = key::key_info::KeyInfo;
 
 #[derive(Clone, Debug)]
 pub enum Pass {
@@ -361,6 +361,7 @@ impl Cmc {
         }
     }
 
+    /// Returns API key details and usage stats.
     pub fn key_info(&self) -> CmcResult<KeyInfo> {
         let resp = self.add_endpoint("v1/key/info").send()?;
         match resp.status() {

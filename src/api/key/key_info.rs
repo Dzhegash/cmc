@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct KeyInfo {
+pub struct CoinMarketCapKeyInfo {
     pub status: Status,
-    pub data: Data,
+    pub data: KeyInfo,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -18,7 +18,7 @@ pub struct Status {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Data {
+pub struct KeyInfo {
     pub plan: Plan,
     pub usage: Usage,
 }
