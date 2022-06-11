@@ -49,3 +49,16 @@ mod deserialize_tests {
         assert_eq!(price, 30181.22136320567);
     }
 }
+
+#[cfg(test)]
+mod network_tests {
+
+    #[test]
+    fn net_price() {
+        let apikey = option_env!("CMC_API").unwrap();
+        use crate::Cmc;
+
+        let cmc = Cmc::new(apikey);
+        assert!(cmc.price("BTC").unwrap() > 0.1)
+    }
+}
