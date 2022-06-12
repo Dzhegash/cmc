@@ -52,10 +52,11 @@ mod deserialize_tests {
 
 #[cfg(test)]
 mod network_tests {
+    use std::env;
 
     #[test]
     fn net_price() {
-        let apikey = option_env!("CMC_API").unwrap();
+        let apikey = env::var("CMC_API").unwrap();
         use crate::Cmc;
 
         let cmc = Cmc::new(apikey);
