@@ -52,6 +52,7 @@ mod deserialize_tests {
 
 #[cfg(test)]
 mod network_tests {
+    use crate::{CmcBuilder, Pass};
     use std::env;
 
     #[test]
@@ -61,5 +62,17 @@ mod network_tests {
 
         let cmc = Cmc::new(apikey);
         assert!(cmc.price("BTC").unwrap() > 0.1)
+    }
+
+    #[test]
+    fn net_price_custom() {
+        let apikey = env::var("CMC_API").unwrap();
+
+        let cmc = CmcBuilder::new(apikey)
+            .pass(Pass::Id)
+            .convert("EUR")
+            .build();
+
+        assert!(cmc.price("1027").unwrap() > 0.1);
     }
 }
