@@ -14,7 +14,7 @@ pub struct PriceConversionV2Id {
     pub data: ConversionRequest,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Status {
     pub timestamp: String,
     pub error_code: i64,
@@ -24,7 +24,7 @@ pub struct Status {
     pub notice: Value,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ConversionRequest {
     pub id: i64,
     pub symbol: String,
@@ -34,7 +34,7 @@ pub struct ConversionRequest {
     pub quote: HashMap<String, Price>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Price {
     pub price: f64,
     pub last_updated: String,
