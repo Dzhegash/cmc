@@ -31,7 +31,7 @@ pub struct CryptoCurrency {
     pub symbol: String,
     pub slug: String,
     pub num_market_pairs: Value,
-    pub date_added: String,
+    pub date_added: Value,
     pub tags: Vec<Tag>,
     pub max_supply: Value,
     pub circulating_supply: Value,
@@ -42,6 +42,7 @@ pub struct CryptoCurrency {
     pub is_fiat: i64,
     pub self_reported_circulating_supply: Value,
     pub self_reported_market_cap: Value,
+    pub tvl_ratio: Value,
     pub last_updated: String,
     pub quote: HashMap<String, Currency>,
 }
