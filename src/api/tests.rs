@@ -87,4 +87,14 @@ mod network_tests {
 
         assert!(cmc.price("bitcoin").unwrap() > 0.1);
     }
+
+    #[test]
+    fn net_key_info() {
+        let apikey = env::var("CMC_API").unwrap();
+        use crate::Cmc;
+
+        let cmc = Cmc::new(apikey);
+        let key_info = cmc.key_info().unwrap();
+        assert!(key_info.plan.credit_limit_daily > 0);
+    }
 }
