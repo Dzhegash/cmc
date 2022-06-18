@@ -68,5 +68,6 @@ pub struct Currency {
     pub market_cap: Value,
     pub market_cap_dominance: Value,
     pub fully_diluted_market_cap: Value,
+    pub tvl: Value,
     pub last_updated: String,
 }
