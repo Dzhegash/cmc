@@ -52,13 +52,12 @@ mod deserialize_tests {
 
 #[cfg(test)]
 mod network_tests {
-    use crate::{CmcBuilder, Pass};
+    use crate::{Cmc, CmcBuilder, Pass, Sort};
     use std::env;
 
     #[test]
     fn net_price() {
         let apikey = env::var("CMC_API").unwrap();
-        use crate::Cmc;
 
         let cmc = Cmc::new(apikey);
         assert!(cmc.price("BTC").unwrap() > 0.1)
@@ -91,10 +90,18 @@ mod network_tests {
     #[test]
     fn net_key_info() {
         let apikey = env::var("CMC_API").unwrap();
-        use crate::Cmc;
 
         let cmc = Cmc::new(apikey);
         let key_info = cmc.key_info().unwrap();
         assert!(key_info.plan.credit_limit_daily > 0);
+    }
+
+    #[test]
+    fn net_id_map() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = Cmc::new(apikey);
+        let map = cmc.id_map(1, 10, Sort::CmcRank).unwrap();
+        assert_eq!(map[1].id, 1027);
+        assert_eq!(map[1].slug, "ethereum");
     }
 }
