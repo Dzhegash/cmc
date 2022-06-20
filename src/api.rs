@@ -225,8 +225,8 @@ impl Cmc {
         }
     }
 
-    fn price_by_id(cmc: &Cmc, id: &str, currency: &str) -> CmcResult<f64> {
-        let resp = cmc
+    fn price_by_id(&self, id: &str, currency: &str) -> CmcResult<f64> {
+        let resp = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
             .query(&[("id", id), ("convert", currency)])
             .send()?;
