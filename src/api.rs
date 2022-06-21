@@ -253,8 +253,8 @@ impl Cmc {
         }
     }
 
-    fn price_by_slug(cmc: &Cmc, slug: &str, currency: &str) -> CmcResult<f64> {
-        let resp = cmc
+    fn price_by_slug(&self, slug: &str, currency: &str) -> CmcResult<f64> {
+        let resp = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
             .query(&[
                 ("slug", slug.to_lowercase().as_str()),
