@@ -52,7 +52,7 @@ mod deserialize_tests {
 
 #[cfg(test)]
 mod network_tests {
-    use crate::{Cmc, CmcBuilder, Pass, Sort};
+    use crate::{Cmc, CmcBuilder, Pass, Sort, SortFiat};
     use std::env;
 
     #[test]
@@ -103,5 +103,13 @@ mod network_tests {
         let map = cmc.id_map(1, 10, Sort::CmcRank).unwrap();
         assert_eq!(map[1].id, 1027);
         assert_eq!(map[1].slug, "ethereum");
+    }
+
+    #[test]
+    fn net_id_map_fiat() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = Cmc::new(apikey);
+        let map = cmc.id_map_fiat(1, 10, SortFiat::Id).unwrap();
+        assert_eq!(map[0].symbol, "USD");
     }
 }
