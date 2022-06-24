@@ -219,9 +219,9 @@ impl Cmc {
         }
         let currency = &self.config.currency;
         match self.config.pass {
-            Pass::Symbol => Ok(Cmc::price_by_symbol(self, &query, currency)?),
-            Pass::Id => Ok(Cmc::price_by_id(self, &query, currency)?),
-            Pass::Slug => Ok(Cmc::price_by_slug(self, &query, currency)?),
+            Pass::Symbol => Ok(self.price_by_symbol(&query, currency)?),
+            Pass::Id => Ok(self.price_by_id(&query, currency)?),
+            Pass::Slug => Ok(self.price_by_slug(&query, currency)?),
         }
     }
 
