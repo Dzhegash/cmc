@@ -6,6 +6,8 @@ pub enum CmcErrors {
     RequestError(#[from] reqwest::Error),
     #[error("Query must not contain commas")]
     IncorrectQuery,
+    #[error("Api answer is null")]
+    NullAnswer,
     #[error("API Error: {0}")]
     ApiError(String),
 }
