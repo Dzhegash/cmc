@@ -29,13 +29,11 @@ pub struct ConversionRequest {
     pub id: i64,
     pub symbol: String,
     pub name: String,
-    pub amount: i64,
-    pub last_updated: String,
+    pub amount: f64,
     pub quote: HashMap<String, Price>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Price {
-    pub price: f64,
-    pub last_updated: String,
+    pub price: Option<f64>,
 }
