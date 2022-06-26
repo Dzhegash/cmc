@@ -1,4 +1,5 @@
 use crate::api::cryptocurrency::quotes_latest_v2::{QuotesLatestV2SlugOrId, QuotesLatestV2Symbol};
+use crate::api::tools::price_conversion_v2::PriceConversionV2Symbol;
 use crate::errors::CmcErrors;
 use api_errors::ApiError;
 use reqwest::blocking::{Client, RequestBuilder};
@@ -369,6 +370,36 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<RootKeyInfo>()?;
                 Ok(root.data)
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    pub fn price_conversion(&self, amount: f64, symbol: &str, convert: &str) -> CmcResult<f64> {
+        let resp = self
+            .add_endpoint("v2/tools/price-conversion")
+            .query(&[("amount", amount)])
+            .query(&[("symbol", symbol), ("convert", convert)])
+            .send()?;
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<PriceConversionV2Symbol>()?;
+                let price = root.data[0]
+                    .quote
+                    .get(&convert.to_uppercase())
+                    .unwrap()
+                    .price;
+                if let Some(price) = price {
+                    Ok(price)
+                } else {
+                    Err(CmcErrors::NullAnswer)
+                }
             }
             code => {
                 let root = resp.json::<ApiError>()?;
