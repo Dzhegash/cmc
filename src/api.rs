@@ -381,6 +381,8 @@ impl Cmc {
         }
     }
 
+    /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
+    /// utilizing the latest market rate for each currency.
     pub fn price_conversion(&self, amount: f64, symbol: &str, convert: &str) -> CmcResult<f64> {
         let resp = self
             .add_endpoint("v2/tools/price-conversion")
