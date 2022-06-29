@@ -383,12 +383,27 @@ impl Cmc {
 
     /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
     /// utilizing the latest market rate for each currency.
-    pub fn price_conversion(&self, amount: f64, symbol: &str, convert: &str) -> CmcResult<f64> {
-        let resp = self
-            .add_endpoint("v2/tools/price-conversion")
-            .query(&[("amount", amount)])
-            .query(&[("symbol", symbol), ("convert", convert)])
-            .send()?;
+    pub fn price_conversion(
+        &self,
+        amount: f64,
+        symbol: &str,
+        time: Option<&str>,
+        convert: &str,
+    ) -> CmcResult<f64> {
+        let resp = match time {
+            Some(t) => self
+                .add_endpoint("v2/tools/price-conversion")
+                .query(&[("amount", amount)])
+                .query(&[("symbol", symbol), ("convert", convert)])
+                .query(&[("time", t)])
+                .send()?,
+            None => self
+                .add_endpoint("v2/tools/price-conversion")
+                .query(&[("amount", amount)])
+                .query(&[("symbol", symbol), ("convert", convert)])
+                .send()?,
+        };
+
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<PriceConversionV2Symbol>()?;
