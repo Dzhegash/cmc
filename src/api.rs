@@ -1,5 +1,5 @@
 use crate::api::cryptocurrency::quotes_latest_v2::{QuotesLatestV2SlugOrId, QuotesLatestV2Symbol};
-use crate::api::tools::price_conversion_v2::PriceConversionV2Symbol;
+use crate::api::tools::price_conversion_v2::{PriceConversionV2Id, PriceConversionV2Symbol};
 use crate::errors::CmcErrors;
 use api_errors::ApiError;
 use reqwest::blocking::{Client, RequestBuilder};
@@ -410,6 +410,54 @@ impl Cmc {
                 let price = root.data[0]
                     .quote
                     .get(&convert.to_uppercase())
+                    .unwrap()
+                    .price;
+                if let Some(price) = price {
+                    Ok(price)
+                } else {
+                    Err(CmcErrors::NullAnswer)
+                }
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
+    /// utilizing the latest market rate for each currency.
+    pub fn price_conversion_id(
+        &self,
+        amount: f64,
+        id: &str,
+        time: Option<&str>,
+        convert_id: &str,
+    ) -> CmcResult<f64> {
+        let resp = match time {
+            Some(t) => self
+                .add_endpoint("v2/tools/price-conversion")
+                .query(&[("amount", amount)])
+                .query(&[("id", id), ("convert_id", convert_id)])
+                .query(&[("time", t)])
+                .send()?,
+            None => self
+                .add_endpoint("v2/tools/price-conversion")
+                .query(&[("amount", amount)])
+                .query(&[("id", id), ("convert_id", convert_id)])
+                .send()?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<PriceConversionV2Id>()?;
+                let price = root
+                    .data
+                    .quote
+                    .get(&convert_id.to_uppercase())
                     .unwrap()
                     .price;
                 if let Some(price) = price {
