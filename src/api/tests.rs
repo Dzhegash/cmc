@@ -112,4 +112,12 @@ mod network_tests {
         let map = cmc.id_map_fiat(1, 10, SortFiat::Id).unwrap();
         assert_eq!(map[0].symbol, "USD");
     }
+
+    #[test]
+    fn net_price_conversion() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = Cmc::new(apikey);
+        let price = cmc.price_conversion(2.5, "BTC", None, "usd").unwrap();
+        assert!(price > 0.1);
+    }
 }
