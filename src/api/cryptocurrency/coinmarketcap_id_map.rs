@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::fmt::Write;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CoinMarketCapIdMap {
@@ -28,4 +29,22 @@ pub struct Cryptocurrency {
     pub first_historical_data: String,
     pub last_historical_data: String,
     pub platform: Value,
+}
+
+pub struct IdMap {
+    pub id_map: Vec<Cryptocurrency>,
+}
+
+impl IdMap {
+    pub fn display(&self) -> String {
+        let mut s = String::new();
+        for cc in &self.id_map {
+            let _ = write!(
+                s,
+                "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------\n",
+                cc.id, cc.name, cc.symbol, cc.slug, cc.rank
+            );
+        }
+        s
+    }
 }
