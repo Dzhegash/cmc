@@ -1,3 +1,4 @@
+use crate::api::cryptocurrency::coinmarketcap_id_map::{CoinMarketCapIdMap, IdMap};
 use crate::api::cryptocurrency::quotes_latest_v2::{QuotesLatestV2SlugOrId, QuotesLatestV2Symbol};
 use crate::api::tools::price_conversion_v2::{PriceConversionV2Id, PriceConversionV2Symbol};
 use crate::errors::CmcErrors;
@@ -14,9 +15,6 @@ mod tools;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
-
-type RootIdMap = cryptocurrency::coinmarketcap_id_map::CoinMarketCapIdMap;
-type IdMap = Vec<cryptocurrency::coinmarketcap_id_map::Cryptocurrency>;
 type RootIdMapFiat = fiat::coinmarketcap_id_map::CoinMarketCapIdMap;
 type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
 type RootKeyInfo = key::key_info::CoinMarketCapKeyInfo;
@@ -185,8 +183,8 @@ impl Cmc {
 
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<RootIdMap>()?;
-                Ok(root.data)
+                let root = resp.json::<CoinMarketCapIdMap>()?;
+                Ok(IdMap { id_map: root.data })
             }
             code => {
                 let root = resp.json::<ApiError>()?;
