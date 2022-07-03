@@ -101,8 +101,8 @@ mod network_tests {
         let apikey = env::var("CMC_API").unwrap();
         let cmc = Cmc::new(apikey);
         let map = cmc.id_map(1, 10, Sort::CmcRank).unwrap();
-        assert_eq!(map[1].id, 1027);
-        assert_eq!(map[1].slug, "ethereum");
+        assert_eq!(map.id_map[1].id, 1027);
+        assert_eq!(map.id_map[1].slug, "ethereum");
     }
 
     #[test]
@@ -118,6 +118,14 @@ mod network_tests {
         let apikey = env::var("CMC_API").unwrap();
         let cmc = Cmc::new(apikey);
         let price = cmc.price_conversion(2.5, "BTC", None, "usd").unwrap();
+        assert!(price > 0.1);
+    }
+
+    #[test]
+    fn net_price_conversion_id() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = Cmc::new(apikey);
+        let price = cmc.price_conversion_id(2.5, "1", None, "2781").unwrap();
         assert!(price > 0.1);
     }
 }
