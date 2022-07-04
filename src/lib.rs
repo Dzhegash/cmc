@@ -8,13 +8,9 @@
 //! use cmc::{Cmc, Sort};
 //!
 //! let cmc = Cmc::new("<API KEY>");
-//! let map = cmc.id_map(1, 5, Sort::Id).unwrap();
-//!
-//! for cc in map {
-//!     println!(
-//!         "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------",
-//!         cc.id, cc.name, cc.symbol, cc.slug, cc.rank
-//!     )
+//! match cmc.id_map(1, 5, Sort::Id) {
+//!     Ok(map) => println!("{}", map.display()),
+//!     Err(err) => println!("{}", err),
 //! }
 //!```
 //!

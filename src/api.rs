@@ -158,13 +158,9 @@ impl Cmc {
     /// use cmc::{Cmc, Sort};
     ///
     /// let cmc = Cmc::new("<API KEY>");
-    /// let map = cmc.id_map(1, 5, Sort::Id).unwrap();
-    ///
-    /// for cc in map {
-    ///     println!(
-    ///         "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------",
-    ///         cc.id, cc.name, cc.symbol, cc.slug, cc.rank
-    ///     )
+    /// match cmc.id_map(1, 5, Sort::Id) {
+    ///     Ok(map) => println!("{}", map.display()),
+    ///     Err(err) => println!("{}", err),
     /// }
     /// ```
     pub fn id_map(&self, start: usize, limit: usize, sort: Sort) -> CmcResult<IdMap> {
@@ -185,6 +181,58 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<CoinMarketCapIdMap>()?;
                 Ok(IdMap { id_map: root.data })
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns a mapping of all supported fiat currencies to unique CoinMarketCap ids.
+    ///
+    /// # Examples
+    ///
+    /// Parameters:
+    /// - `start` Offset the start.
+    /// - `limit` Specify the number of results to return.
+    /// - `sort` What field to sort the list of currencies by.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::{Cmc, SortFiat};
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    /// let map_fiat = cmc.id_map_fiat(1, 100, SortFiat::Name).unwrap();
+    /// for f in map_fiat {
+    ///     println!(
+    ///         "Id: {}\nName: {}\nSign: {}\nSymbol: {}\n---------------",
+    ///         f.id, f.name, f.sign, f.symbol
+    ///     )
+    /// }
+    /// ```
+    pub fn id_map_fiat(&self, start: usize, limit: usize, sort: SortFiat) -> CmcResult<IdMapFiat> {
+        let resp = match sort {
+            SortFiat::Id => self
+                .add_endpoint("v1/fiat/map")
+                .query(&[("start", start), ("limit", limit)])
+                .query(&[("sort", "id")])
+                .send()?,
+            SortFiat::Name => self
+                .add_endpoint("v1/fiat/map")
+                .query(&[("start", start), ("limit", limit)])
+                .query(&[("sort", "name")])
+                .send()?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<RootIdMapFiat>()?;
+                Ok(root.data)
             }
             code => {
                 let root = resp.json::<ApiError>()?;
@@ -298,58 +346,6 @@ impl Cmc {
                     .unwrap()
                     .price;
                 Ok(price)
-            }
-            code => {
-                let root = resp.json::<ApiError>()?;
-                Err(CmcErrors::ApiError(format!(
-                    "Status Code: {}. Error message: {}",
-                    code, root.status.error_message
-                )))
-            }
-        }
-    }
-
-    /// Returns a mapping of all supported fiat currencies to unique CoinMarketCap ids.
-    ///
-    /// # Examples
-    ///
-    /// Parameters:
-    /// - `start` Offset the start.
-    /// - `limit` Specify the number of results to return.
-    /// - `sort` What field to sort the list by.
-    ///
-    /// Basic usage:
-    ///
-    /// ```rust
-    /// use cmc::{Cmc, SortFiat};
-    ///
-    /// let cmc = Cmc::new("<API KEY>");
-    /// let map_fiat = cmc.id_map_fiat(1, 100, SortFiat::Name).unwrap();
-    /// for f in map_fiat {
-    ///     println!(
-    ///         "Id: {}\nName: {}\nSign: {}\nSymbol: {}\n---------------",
-    ///         f.id, f.name, f.sign, f.symbol
-    ///     )
-    /// }
-    /// ```
-    pub fn id_map_fiat(&self, start: usize, limit: usize, sort: SortFiat) -> CmcResult<IdMapFiat> {
-        let resp = match sort {
-            SortFiat::Id => self
-                .add_endpoint("v1/fiat/map")
-                .query(&[("start", start), ("limit", limit)])
-                .query(&[("sort", "id")])
-                .send()?,
-            SortFiat::Name => self
-                .add_endpoint("v1/fiat/map")
-                .query(&[("start", start), ("limit", limit)])
-                .query(&[("sort", "name")])
-                .send()?,
-        };
-
-        match resp.status() {
-            StatusCode::OK => {
-                let root = resp.json::<RootIdMapFiat>()?;
-                Ok(root.data)
             }
             code => {
                 let root = resp.json::<ApiError>()?;
