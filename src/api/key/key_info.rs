@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CoinMarketCapKeyInfo {
+pub struct CmcKeyInfo {
     pub status: Status,
     pub data: KeyInfo,
 }

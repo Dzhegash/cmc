@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CoinMarketCapIdMap {
+pub struct CmcIdMapFiat {
     pub status: Status,
     pub data: Vec<Currency>,
 }

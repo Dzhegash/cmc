@@ -1,6 +1,6 @@
-use crate::api::cryptocurrency::coinmarketcap_id_map::{CoinMarketCapIdMap, IdMap};
-use crate::api::cryptocurrency::quotes_latest_v2::{QuotesLatestV2SlugOrId, QuotesLatestV2Symbol};
-use crate::api::tools::price_conversion_v2::{PriceConversionV2Id, PriceConversionV2Symbol};
+use crate::api::cryptocurrency::coinmarketcap_id_map::{CmcIdMap, IdMap};
+use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
+use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::CmcErrors;
 use api_errors::ApiError;
 use reqwest::blocking::{Client, RequestBuilder};
@@ -15,9 +15,9 @@ mod tools;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
-type RootIdMapFiat = fiat::coinmarketcap_id_map::CoinMarketCapIdMap;
+type RootIdMapFiat = fiat::coinmarketcap_id_map::CmcIdMapFiat;
 type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
-type RootKeyInfo = key::key_info::CoinMarketCapKeyInfo;
+type RootKeyInfo = key::key_info::CmcKeyInfo;
 type KeyInfo = key::key_info::KeyInfo;
 
 #[derive(Clone, Debug)]
@@ -179,7 +179,7 @@ impl Cmc {
 
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<CoinMarketCapIdMap>()?;
+                let root = resp.json::<CmcIdMap>()?;
                 Ok(IdMap { id_map: root.data })
             }
             code => {
@@ -279,7 +279,7 @@ impl Cmc {
             .send()?;
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<QuotesLatestV2SlugOrId>()?;
+                let root = resp.json::<QLv2Id>()?;
                 let price = root
                     .data
                     .get(id)
@@ -310,7 +310,7 @@ impl Cmc {
             .send()?;
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<QuotesLatestV2SlugOrId>()?;
+                let root = resp.json::<QLv2Slug>()?;
                 let slug_id = root.data.iter().next().unwrap().0;
                 let price = root
                     .data
@@ -339,7 +339,7 @@ impl Cmc {
             .send()?;
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<QuotesLatestV2Symbol>()?;
+                let root = resp.json::<QLv2Symbol>()?;
                 let price = root.data.get(&symbol.to_uppercase()).unwrap()[0]
                     .quote
                     .get(currency)
@@ -400,7 +400,7 @@ impl Cmc {
 
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<PriceConversionV2Symbol>()?;
+                let root = resp.json::<PCv2Symbol>()?;
                 let price = root.data[0]
                     .quote
                     .get(&convert.to_uppercase())
@@ -447,7 +447,7 @@ impl Cmc {
 
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<PriceConversionV2Id>()?;
+                let root = resp.json::<PCv2Id>()?;
                 let price = root
                     .data
                     .quote

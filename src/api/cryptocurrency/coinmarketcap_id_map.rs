@@ -3,7 +3,7 @@ use serde_json::Value;
 use std::fmt::Write;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CoinMarketCapIdMap {
+pub struct CmcIdMap {
     pub status: Status,
     pub data: Vec<Cryptocurrency>,
 }

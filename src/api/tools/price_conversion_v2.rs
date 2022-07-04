@@ -3,13 +3,13 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PriceConversionV2Symbol {
+pub struct PCv2Symbol {
     pub status: Status,
     pub data: Vec<ConversionRequest>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PriceConversionV2Id {
+pub struct PCv2Id {
     pub status: Status,
     pub data: ConversionRequest,
 }
