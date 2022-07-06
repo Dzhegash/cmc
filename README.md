@@ -50,6 +50,7 @@ match cmc.price("1027") { // 1027 is Ethereum id.
 use cmc::{Cmc, Sort};
 
 let cmc = Cmc::new("<API KEY>");
+
 match cmc.id_map(1, 5, Sort::Id) {
     Ok(map) => println!("{}", map.display()),
     Err(err) => println!("{}", err),
