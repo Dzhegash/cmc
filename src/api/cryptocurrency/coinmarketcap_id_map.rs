@@ -31,14 +31,10 @@ pub struct Cryptocurrency {
     pub platform: Value,
 }
 
-pub struct IdMap {
-    pub id_map: Vec<Cryptocurrency>,
-}
-
-impl IdMap {
+impl CmcIdMap {
     pub fn display(&self) -> String {
         let mut s = String::new();
-        for cc in &self.id_map {
+        for cc in &self.data {
             let _ = write!(
                 s,
                 "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------\n",

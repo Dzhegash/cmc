@@ -1,4 +1,4 @@
-use crate::api::cryptocurrency::coinmarketcap_id_map::{CmcIdMap, IdMap};
+use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::CmcErrors;
@@ -166,7 +166,7 @@ impl Cmc {
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
-    pub fn id_map(&self, start: usize, limit: usize, sort: Sort) -> CmcResult<IdMap> {
+    pub fn id_map(&self, start: usize, limit: usize, sort: Sort) -> CmcResult<CmcIdMap> {
         let resp = match sort {
             Sort::Id => self
                 .add_endpoint("v1/cryptocurrency/map")
@@ -183,7 +183,7 @@ impl Cmc {
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<CmcIdMap>()?;
-                Ok(IdMap { id_map: root.data })
+                Ok(root)
             }
             code => {
                 let root = resp.json::<ApiError>()?;
