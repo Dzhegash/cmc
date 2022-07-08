@@ -1,5 +1,6 @@
 use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
+use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::CmcErrors;
 use api_errors::ApiError;
@@ -15,8 +16,6 @@ mod tools;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
-type RootIdMapFiat = fiat::coinmarketcap_id_map::CmcIdMapFiat;
-type IdMapFiat = Vec<fiat::coinmarketcap_id_map::Currency>;
 type RootKeyInfo = key::key_info::CmcKeyInfo;
 type KeyInfo = key::key_info::KeyInfo;
 
@@ -210,15 +209,18 @@ impl Cmc {
     /// use cmc::{Cmc, SortFiat};
     ///
     /// let cmc = Cmc::new("<API KEY>");
-    /// let map_fiat = cmc.id_map_fiat(1, 100, SortFiat::Name).unwrap();
-    /// for f in map_fiat {
-    ///     println!(
-    ///         "Id: {}\nName: {}\nSign: {}\nSymbol: {}\n---------------",
-    ///         f.id, f.name, f.sign, f.symbol
-    ///     )
+    ///
+    /// match cmc.id_map_fiat(1, 100, SortFiat::Name) {
+    ///     Ok(map) => println!("{}", map.display()),
+    ///     Err(err) => println!("{}", err),
     /// }
     /// ```
-    pub fn id_map_fiat(&self, start: usize, limit: usize, sort: SortFiat) -> CmcResult<IdMapFiat> {
+    pub fn id_map_fiat(
+        &self,
+        start: usize,
+        limit: usize,
+        sort: SortFiat,
+    ) -> CmcResult<CmcIdMapFiat> {
         let resp = match sort {
             SortFiat::Id => self
                 .add_endpoint("v1/fiat/map")
@@ -234,8 +236,8 @@ impl Cmc {
 
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<RootIdMapFiat>()?;
-                Ok(root.data)
+                let root = resp.json::<CmcIdMapFiat>()?;
+                Ok(root)
             }
             code => {
                 let root = resp.json::<ApiError>()?;
