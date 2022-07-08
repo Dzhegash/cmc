@@ -101,8 +101,8 @@ mod network_tests {
         let apikey = env::var("CMC_API").unwrap();
         let cmc = Cmc::new(apikey);
         let map = cmc.id_map(1, 10, Sort::CmcRank).unwrap();
-        assert_eq!(map.id_map[1].id, 1027);
-        assert_eq!(map.id_map[1].slug, "ethereum");
+        assert_eq!(map.data[1].id, 1027);
+        assert_eq!(map.data[1].slug, "ethereum");
     }
 
     #[test]
@@ -110,7 +110,7 @@ mod network_tests {
         let apikey = env::var("CMC_API").unwrap();
         let cmc = Cmc::new(apikey);
         let map = cmc.id_map_fiat(1, 10, SortFiat::Id).unwrap();
-        assert_eq!(map[0].symbol, "USD");
+        assert_eq!(map.data[0].symbol, "USD");
     }
 
     #[test]
