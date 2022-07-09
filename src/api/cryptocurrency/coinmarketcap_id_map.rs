@@ -35,9 +35,9 @@ impl CmcIdMap {
     pub fn display(&self) -> String {
         let mut s = String::new();
         for cc in &self.data {
-            let _ = write!(
+            let _ = writeln!(
                 s,
-                "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------\n",
+                "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------",
                 cc.id, cc.name, cc.symbol, cc.slug, cc.rank
             );
         }

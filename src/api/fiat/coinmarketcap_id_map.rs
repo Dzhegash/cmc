@@ -30,7 +30,7 @@ impl CmcIdMapFiat {
     pub fn display(&self) -> String {
         let mut s = String::new();
         for f in &self.data {
-            let _ = write!(
+            let _ = writeln!(
                 s,
                 "Id: {}\nName: {}\nSign: {}\nSymbol: {}\n---------------",
                 f.id, f.name, f.sign, f.symbol
