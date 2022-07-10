@@ -263,7 +263,6 @@ impl Cmc {
     ///     Ok(price) => println!("{}", price),
     ///     Err(err) => println!("Error: {}", err),
     /// }
-    ///
     /// ```
     pub fn price<T: Into<String>>(&self, query: T) -> CmcResult<f64> {
         let query = query.into();
@@ -383,6 +382,27 @@ impl Cmc {
 
     /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
     /// utilizing the latest market rate for each currency.
+    ///
+    /// # Examples
+    ///
+    /// Parameters:
+    /// - `amount` An amount of currency to convert.
+    /// - `symbol` Alternatively the currency symbol of the base cryptocurrency or fiat to convert from.
+    /// - `time` Optional timestamp (Unix or ISO 8601) to reference historical pricing during conversion. If not passed, the current time will be used.
+    /// - `convert` Pass  fiat or cryptocurrency symbols to convert the source amount to.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::Cmc;
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// match cmc.price_conversion(2.5, "BTC", None, "EUR") {
+    ///     Ok(price) => println!("Total price: {}", price),
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
     pub fn price_conversion(
         &self,
         amount: f64,
