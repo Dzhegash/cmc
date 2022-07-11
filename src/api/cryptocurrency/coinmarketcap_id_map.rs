@@ -30,17 +30,3 @@ pub struct Cryptocurrency {
     pub last_historical_data: String,
     pub platform: Value,
 }
-
-impl CmcIdMap {
-    pub fn display(&self) -> String {
-        let mut s = String::new();
-        for cc in &self.data {
-            let _ = writeln!(
-                s,
-                "CMC Id: {}\nName: {}\nSymbol: {}\nSlug: {}\nRank: {}\n---------------",
-                cc.id, cc.name, cc.symbol, cc.slug, cc.rank
-            );
-        }
-        s
-    }
-}

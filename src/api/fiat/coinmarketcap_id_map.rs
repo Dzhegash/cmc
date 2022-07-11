@@ -25,17 +25,3 @@ pub struct Currency {
     pub sign: String,
     pub symbol: String,
 }
-
-impl CmcIdMapFiat {
-    pub fn display(&self) -> String {
-        let mut s = String::new();
-        for f in &self.data {
-            let _ = writeln!(
-                s,
-                "Id: {}\nName: {}\nSign: {}\nSymbol: {}\n---------------",
-                f.id, f.name, f.sign, f.symbol
-            );
-        }
-        s
-    }
-}
