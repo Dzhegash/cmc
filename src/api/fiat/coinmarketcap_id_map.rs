@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::fmt::Write;
+use std::fmt::{Display, Formatter, Write};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CmcIdMapFiat {
@@ -24,4 +24,17 @@ pub struct Currency {
     pub name: String,
     pub sign: String,
     pub symbol: String,
+}
+
+impl Display for CmcIdMapFiat {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        for fc in &self.data {
+            let _ = writeln!(
+                f,
+                "Id: {}\nName: {}\nSign: {}\nSymbol: {}\n---------------",
+                fc.id, fc.name, fc.sign, fc.symbol
+            );
+        }
+        Ok(())
+    }
 }
