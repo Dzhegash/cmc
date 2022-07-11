@@ -161,7 +161,7 @@ impl Cmc {
     /// let cmc = Cmc::new("<API KEY>");
     ///
     /// match cmc.id_map(1, 5, Sort::Id) {
-    ///     Ok(map) => println!("{}", map.display()),
+    ///     Ok(map) => println!("{}", map),
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
@@ -211,7 +211,7 @@ impl Cmc {
     /// let cmc = Cmc::new("<API KEY>");
     ///
     /// match cmc.id_map_fiat(1, 100, SortFiat::Name) {
-    ///     Ok(map) => println!("{}", map.display()),
+    ///     Ok(map) => println!("{}", map),
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
@@ -398,6 +398,7 @@ impl Cmc {
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
+    /// // 2.5 BTC in EUR
     /// match cmc.price_conversion(2.5, "BTC", None, "EUR") {
     ///     Ok(price) => println!("Total price: {}", price),
     ///     Err(err) => println!("Error: {}", err),
@@ -450,6 +451,28 @@ impl Cmc {
 
     /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
     /// utilizing the latest market rate for each currency.
+    ///
+    /// # Examples
+    ///
+    /// Parameters:
+    /// - `amount` An amount of currency to convert.
+    /// - `id` The CoinMarketCap currency ID of the base cryptocurrency or fiat to convert from.
+    /// - `time` Optional timestamp (Unix or ISO 8601) to reference historical pricing during conversion. If not passed, the current time will be used.
+    /// - `convert_id` Optionally calculate market quotes by CoinMarketCap ID instead of symbol. This option is identical to convert outside of ID format.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::Cmc;
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// // 3.2 BTC in USD.
+    /// match cmc.price_conversion_id(3.2, "1", None, "2781") {
+    ///     Ok(price) => println!("Total price: {}", price),
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
     pub fn price_conversion_id(
         &self,
         amount: f64,

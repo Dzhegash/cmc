@@ -10,7 +10,7 @@
 //! let cmc = Cmc::new("<API KEY>");
 //!
 //! match cmc.id_map(1, 5, Sort::Id) {
-//!     Ok(map) => println!("{}", map.display()),
+//!     Ok(map) => println!("{}", map),
 //!     Err(err) => println!("{}", err),
 //! }
 //!```
@@ -38,6 +38,25 @@
 //!
 //! match cmc.price("1027") { // 1027 is Ethereum id.
 //!     Ok(price) => println!("{}", price), // In Euro instead default USD
+//!     Err(err) => println!("Error: {}", err),
+//! }
+//!```
+//!
+//! ## Price conversion
+//!```rust
+//! use cmc::Cmc;
+//!
+//! let cmc = Cmc::new("<API KEY>");
+//!
+//! // 2.5 BTC in EUR (using symbols)
+//! match cmc.price_conversion(2.5, "BTC", None, "EUR") {
+//!     Ok(price) => println!("Total price: {}", price),
+//!     Err(err) => println!("Error: {}", err),
+//! }
+//!
+//! // 3.2 BTC in USD (using id's)
+//! match cmc.price_conversion_id(3.2, "1", None, "2781") {
+//!     Ok(price) => println!("Total price: {}", price),
 //!     Err(err) => println!("Error: {}", err),
 //! }
 //!```
