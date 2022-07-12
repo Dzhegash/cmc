@@ -9,7 +9,7 @@
 //!
 //! let cmc = Cmc::new("<API KEY>");
 //!
-//! match cmc.id_map(1, 5, Sort::Id) {
+//! match cmc.id_map(1, 50, Sort::CmcRank) {
 //!     Ok(map) => println!("{}", map),
 //!     Err(err) => println!("{}", err),
 //! }
