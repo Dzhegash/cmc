@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -10,4 +12,18 @@ pub enum CmcErrors {
     NullAnswer,
     #[error("API Error: {0}")]
     ApiError(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ApiError {
+    pub status: StatusError,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StatusError {
+    pub timestamp: String,
+    pub error_code: i64,
+    pub error_message: Value,
+    pub elapsed: i64,
+    pub credit_count: i64,
 }

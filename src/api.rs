@@ -1,13 +1,12 @@
 use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
+use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
-use crate::errors::CmcErrors;
-use api_errors::ApiError;
+use crate::errors::{ApiError, CmcErrors};
 use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
 
-pub mod api_errors;
 mod cryptocurrency;
 mod fiat;
 mod key;
@@ -16,8 +15,6 @@ mod tools;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
-type RootKeyInfo = key::key_info::CmcKeyInfo;
-type KeyInfo = key::key_info::KeyInfo;
 
 #[derive(Clone, Debug)]
 pub enum Pass {
@@ -367,7 +364,7 @@ impl Cmc {
         let resp = self.add_endpoint("v1/key/info").send()?;
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<RootKeyInfo>()?;
+                let root = resp.json::<CmcKeyInfo>()?;
                 Ok(root.data)
             }
             code => {
