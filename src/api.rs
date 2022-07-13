@@ -87,7 +87,7 @@ impl CmcBuilder {
     /// let cmc = CmcBuilder::new("<API KEY>").pass(Pass::Id).build();
     ///
     /// match cmc.price("1027") { // 1027 is Ethereum id.
-    ///     Ok(price) => println!("{}", price),
+    ///     Ok(price) => println!("Price: {}", price),
     ///     Err(err) => println!("Error: {}", err),
     /// }
     /// ```
@@ -105,7 +105,7 @@ impl CmcBuilder {
     /// let cmc = CmcBuilder::new("<API KEY>").convert("EUR").build();
     ///
     /// match cmc.price("ETH") {
-    ///     Ok(price) => println!("{}", price), // In Euro
+    ///     Ok(price) => println!("Price: {}", price), // In Euro
     ///     Err(err) => println!("Error: {}", err),
     /// }
     /// ```
@@ -260,7 +260,7 @@ impl Cmc {
     /// let cmc = Cmc::new("<API KEY>");
     ///
     /// match cmc.price("BTC") {
-    ///     Ok(price) => println!("{}", price),
+    ///     Ok(price) => println!("Price: {}", price),
     ///     Err(err) => println!("Error: {}", err),
     /// }
     /// ```

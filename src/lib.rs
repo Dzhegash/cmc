@@ -22,7 +22,7 @@
 //! let cmc = Cmc::new("<API KEY>");
 //!
 //! match cmc.price("BTC") {
-//!     Ok(price) => println!("{}", price),
+//!     Ok(price) => println!("Price: {}", price),
 //!     Err(err) => println!("Error: {}", err),
 //! }
 //!```
@@ -37,7 +37,7 @@
 //!     .build();
 //!
 //! match cmc.price("1027") { // 1027 is Ethereum id.
-//!     Ok(price) => println!("{}", price), // In Euro instead default USD
+//!     Ok(price) => println!("Price: {}", price), // In Euro instead default USD
 //!     Err(err) => println!("Error: {}", err),
 //! }
 //!```
