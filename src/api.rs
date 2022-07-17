@@ -1,3 +1,4 @@
+use crate::api::cryptocurrency::categories::CmcCategories;
 use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
@@ -505,6 +506,38 @@ impl Cmc {
                 } else {
                     Err(CmcErrors::NullAnswer)
                 }
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    pub fn categories<T: Into<String>>(
+        &self,
+        start: usize,
+        limit: usize,
+        query: T,
+    ) -> CmcResult<CmcCategories> {
+        let query = query.into();
+        let rb = self
+            .add_endpoint("v1/cryptocurrency/categories")
+            .query(&[("start", start), ("limit", limit)]);
+
+        let resp = match self.config.pass {
+            Pass::Symbol => rb.query(&[("symbol", query)]).send()?,
+            Pass::Id => rb.query(&[("id", query)]).send()?,
+            Pass::Slug => rb.query(&[("slug", query)]).send()?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcCategories>()?;
+                Ok(root)
             }
             code => {
                 let root = resp.json::<ApiError>()?;
