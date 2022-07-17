@@ -517,6 +517,7 @@ impl Cmc {
         }
     }
 
+    /// Returns information about all coin categories available on CoinMarketCap.
     pub fn categories<T: Into<String>>(
         &self,
         start: usize,
