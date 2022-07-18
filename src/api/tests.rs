@@ -128,4 +128,12 @@ mod network_tests {
         let price = cmc.price_conversion_id(2.5, "1", None, "2781").unwrap();
         assert!(price > 0.1);
     }
+
+    #[test]
+    fn net_categories() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = CmcBuilder::new(apikey).pass(Pass::Id).build();
+        let categories = cmc.categories(1, 10, "1027").unwrap();
+        assert!(categories.data[0].market_cap > 0.1)
+    }
 }
