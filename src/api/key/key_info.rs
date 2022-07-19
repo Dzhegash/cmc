@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CmcKeyInfo {
@@ -57,4 +58,21 @@ pub struct CurrentDay {
 pub struct CurrentMonth {
     pub credits_used: i64,
     pub credits_left: i64,
+}
+
+impl Display for KeyInfo {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Plan credit limits:\nDaily: {}\nDaily reset: {}\nMonthly: {}\nMonthly reset: {}\n\
+            Rate limit minute: {}\n----------------------\nCredits left:\nDay: {}\nMonth: {}",
+            self.plan.credit_limit_daily,
+            self.plan.credit_limit_daily_reset,
+            self.plan.credit_limit_monthly,
+            self.plan.credit_limit_monthly_reset,
+            self.plan.rate_limit_minute,
+            self.usage.current_day.credits_left,
+            self.usage.current_month.credits_left
+        )
+    }
 }
