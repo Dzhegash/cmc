@@ -164,17 +164,13 @@ impl Cmc {
     /// }
     /// ```
     pub fn id_map(&self, start: usize, limit: usize, sort: Sort) -> CmcResult<CmcIdMap> {
+        let rb = self
+            .add_endpoint("v1/cryptocurrency/map")
+            .query(&[("start", start), ("limit", limit)]);
+
         let resp = match sort {
-            Sort::Id => self
-                .add_endpoint("v1/cryptocurrency/map")
-                .query(&[("start", start), ("limit", limit)])
-                .query(&[("sort", "id")])
-                .send()?,
-            Sort::CmcRank => self
-                .add_endpoint("v1/cryptocurrency/map")
-                .query(&[("start", start), ("limit", limit)])
-                .query(&[("sort", "cmc_rank")])
-                .send()?,
+            Sort::Id => rb.query(&[("sort", "id")]).send()?,
+            Sort::CmcRank => rb.query(&[("sort", "cmc_rank")]).send()?,
         };
 
         match resp.status() {
