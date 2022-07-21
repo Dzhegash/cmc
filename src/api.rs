@@ -215,17 +215,13 @@ impl Cmc {
         limit: usize,
         sort: SortFiat,
     ) -> CmcResult<CmcIdMapFiat> {
+        let rb = self
+            .add_endpoint("v1/fiat/map")
+            .query(&[("start", start), ("limit", limit)]);
+
         let resp = match sort {
-            SortFiat::Id => self
-                .add_endpoint("v1/fiat/map")
-                .query(&[("start", start), ("limit", limit)])
-                .query(&[("sort", "id")])
-                .send()?,
-            SortFiat::Name => self
-                .add_endpoint("v1/fiat/map")
-                .query(&[("start", start), ("limit", limit)])
-                .query(&[("sort", "name")])
-                .send()?,
+            SortFiat::Id => rb.query(&[("sort", "id")]).send()?,
+            SortFiat::Name => rb.query(&[("sort", "name")]).send()?,
         };
 
         match resp.status() {
