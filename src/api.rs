@@ -514,13 +514,36 @@ impl Cmc {
     }
 
     /// Returns information about all coin categories available on CoinMarketCap.
+    ///
+    /// # Examples
+    ///
+    /// Parameters:
+    /// - `start` Optionally offset the start (1-based index) of the paginated list of items to return.
+    /// - `limit` Optionally specify the number of results to return. Use this parameter and the "start" parameter to determine your own pagination size.
+    /// - `pass` Cryptocurrency pass (id, slug, symbol)
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::{CmcBuilder, Pass};
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Id)
+    ///     .build();
+    ///
+    /// match cmc.categories(1, 10, "1027") {
+    ///     Ok(categories) => println!("{}", categories),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    ///
+    /// ```
     pub fn categories<T: Into<String>>(
         &self,
         start: usize,
         limit: usize,
-        query: T,
+        pass: T,
     ) -> CmcResult<CmcCategories> {
-        let query = query.into();
+        let query = pass.into();
         let rb = self
             .add_endpoint("v1/cryptocurrency/categories")
             .query(&[("start", start), ("limit", limit)]);
