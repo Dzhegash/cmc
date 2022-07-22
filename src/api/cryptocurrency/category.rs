@@ -26,3 +26,26 @@ pub struct Category {
     pub volume_change: f64,
     pub coins: Vec<Coin>,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Coin {
+    pub id: i64,
+    pub name: String,
+    pub symbol: String,
+    pub slug: String,
+    pub num_market_pairs: i64,
+    pub date_added: String,
+    pub tags: Vec<String>,
+    pub max_supply: Option<i64>,
+    pub circulating_supply: f64,
+    pub total_supply: f64,
+    pub is_active: i64,
+    pub platform: Option<Platform>,
+    pub cmc_rank: i64,
+    pub is_fiat: i64,
+    pub self_reported_circulating_supply: Value,
+    pub self_reported_market_cap: Value,
+    pub tvl_ratio: Option<f64>,
+    pub last_updated: String,
+    pub quote: Quote,
+}
