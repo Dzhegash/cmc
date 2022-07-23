@@ -49,3 +49,12 @@ pub struct Coin {
     pub last_updated: String,
     pub quote: Quote,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Platform {
+    pub id: i64,
+    pub name: String,
+    pub symbol: String,
+    pub slug: String,
+    pub token_address: String,
+}
