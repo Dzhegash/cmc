@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Status {
@@ -47,7 +48,7 @@ pub struct Coin {
     pub self_reported_market_cap: Value,
     pub tvl_ratio: Option<f64>,
     pub last_updated: String,
-    pub quote: Quote,
+    pub quote: HashMap<String, Currency>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -57,4 +58,22 @@ pub struct Platform {
     pub symbol: String,
     pub slug: String,
     pub token_address: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Currency {
+    pub price: f64,
+    pub volume_24h: Value,
+    pub volume_change_24h: Value,
+    pub percent_change_1h: Value,
+    pub percent_change_24h: Value,
+    pub percent_change_7d: Value,
+    pub percent_change_30d: Value,
+    pub percent_change_60d: Value,
+    pub percent_change_90d: Value,
+    pub market_cap: Value,
+    pub market_cap_dominance: Value,
+    pub fully_diluted_market_cap: Value,
+    pub tvl: Value,
+    pub last_updated: String,
 }
