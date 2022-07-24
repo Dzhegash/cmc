@@ -3,6 +3,12 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CmcCategory {
+    pub status: Status,
+    pub data: Category,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Status {
     pub timestamp: String,
     pub error_code: i64,
