@@ -401,18 +401,14 @@ impl Cmc {
         time: Option<&str>,
         convert: &str,
     ) -> CmcResult<f64> {
+        let rb = self
+            .add_endpoint("v2/tools/price-conversion")
+            .query(&[("amount", amount)])
+            .query(&[("symbol", symbol), ("convert", convert)]);
+
         let resp = match time {
-            Some(t) => self
-                .add_endpoint("v2/tools/price-conversion")
-                .query(&[("amount", amount)])
-                .query(&[("symbol", symbol), ("convert", convert)])
-                .query(&[("time", t)])
-                .send()?,
-            None => self
-                .add_endpoint("v2/tools/price-conversion")
-                .query(&[("amount", amount)])
-                .query(&[("symbol", symbol), ("convert", convert)])
-                .send()?,
+            Some(t) => rb.query(&[("time", t)]).send()?,
+            None => rb.send()?,
         };
 
         match resp.status() {
