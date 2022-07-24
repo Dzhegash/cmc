@@ -466,18 +466,14 @@ impl Cmc {
         time: Option<&str>,
         convert_id: &str,
     ) -> CmcResult<f64> {
+        let rb = self
+            .add_endpoint("v2/tools/price-conversion")
+            .query(&[("amount", amount)])
+            .query(&[("id", id), ("convert_id", convert_id)]);
+
         let resp = match time {
-            Some(t) => self
-                .add_endpoint("v2/tools/price-conversion")
-                .query(&[("amount", amount)])
-                .query(&[("id", id), ("convert_id", convert_id)])
-                .query(&[("time", t)])
-                .send()?,
-            None => self
-                .add_endpoint("v2/tools/price-conversion")
-                .query(&[("amount", amount)])
-                .query(&[("id", id), ("convert_id", convert_id)])
-                .send()?,
+            Some(t) => rb.query(&[("time", t)]).send()?,
+            None => rb.send()?,
         };
 
         match resp.status() {
