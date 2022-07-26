@@ -266,7 +266,13 @@ impl Cmc {
         if query.contains(',') {
             return Err(CmcErrors::IncorrectQuery);
         }
-        let currency = &self.config.currency;
+
+        let currency = if let Some(currency_id) = &self.config.currency_id {
+            currency_id
+        } else {
+            &self.config.currency
+        };
+
         match self.config.pass {
             Pass::Symbol => Ok(self.price_by_symbol(&query, currency)?),
             Pass::Id => Ok(self.price_by_id(&query, currency)?),
@@ -275,10 +281,16 @@ impl Cmc {
     }
 
     fn price_by_id(&self, id: &str, currency: &str) -> CmcResult<f64> {
-        let resp = self
+        let rb = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
-            .query(&[("id", id), ("convert", currency)])
-            .send()?;
+            .query(&[("id", id)]);
+
+        let resp = if self.config.currency_id.is_some() {
+            rb.query(&[("convert_id", currency)]).send()?
+        } else {
+            rb.query(&[("convert", currency)]).send()?
+        };
+
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<QLv2Id>()?;
