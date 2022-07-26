@@ -40,6 +40,7 @@ pub enum SortFiat {
 struct Config {
     pass: Pass,
     currency: String,
+    currency_id: Option<String>,
 }
 
 impl Default for Config {
@@ -47,6 +48,7 @@ impl Default for Config {
         Self {
             pass: Pass::Symbol,
             currency: "USD".into(),
+            currency_id: None,
         }
     }
 }
@@ -556,4 +558,6 @@ impl Cmc {
             }
         }
     }
+
+   // pub fn category()
 }
