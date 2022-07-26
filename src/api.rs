@@ -114,6 +114,11 @@ impl CmcBuilder {
         self
     }
 
+    pub fn convert_id<T: Into<String>>(mut self, currency_id: T) -> CmcBuilder {
+        self.config.currency_id = Some(currency_id.into());
+        self
+    }
+
     /// Returns a Cmc client that uses this CmcBuilder configuration.
     pub fn build(self) -> Cmc {
         Cmc {
@@ -559,5 +564,5 @@ impl Cmc {
         }
     }
 
-   // pub fn category()
+    // pub fn category()
 }
