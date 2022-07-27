@@ -1,4 +1,5 @@
 use crate::api::cryptocurrency::categories::CmcCategories;
+use crate::api::cryptocurrency::category::{Category, CmcCategory};
 use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
@@ -583,5 +584,31 @@ impl Cmc {
         }
     }
 
-    // pub fn category()
+    pub fn category(&self, id: &str, start: usize, limit: usize) -> CmcResult<Category> {
+        let rb = self
+            .add_endpoint("v1/cryptocurrency/category")
+            .query(&[("id", id)])
+            .query(&[("start", start), ("limit", limit)]);
+
+        let resp = if self.config.currency_id.is_some() {
+            rb.query(&[("convert_id", &self.config.currency_id)])
+                .send()?
+        } else {
+            rb.query(&[("convert", &self.config.currency)]).send()?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcCategory>()?;
+                Ok(root.data)
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
 }
