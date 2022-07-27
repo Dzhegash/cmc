@@ -315,13 +315,15 @@ impl Cmc {
     }
 
     fn price_by_slug(&self, slug: &str, currency: &str) -> CmcResult<f64> {
-        let resp = self
+        let rb = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
-            .query(&[
-                ("slug", slug.to_lowercase().as_str()),
-                ("convert", currency),
-            ])
-            .send()?;
+            .query(&[("slug", slug.to_lowercase())]);
+        let resp = if self.config.currency_id.is_some() {
+            rb.query(&[("convert_id", currency)]).send()?
+        } else {
+            rb.query(&[("convert", currency)]).send()?
+        };
+
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<QLv2Slug>()?;
