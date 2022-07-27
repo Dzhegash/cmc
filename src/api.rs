@@ -349,10 +349,15 @@ impl Cmc {
     }
 
     fn price_by_symbol(&self, symbol: &str, currency: &str) -> CmcResult<f64> {
-        let resp = self
+        let rb = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
-            .query(&[("symbol", symbol), ("convert", currency)])
-            .send()?;
+            .query(&[("symbol", symbol)]);
+
+        let resp = if self.config.currency_id.is_some() {
+            rb.query(&[("convert_id", currency)]).send()?
+        } else {
+            rb.query(&[("convert", currency)]).send()?
+        };
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<QLv2Symbol>()?;
