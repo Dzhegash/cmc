@@ -136,4 +136,12 @@ mod network_tests {
         let categories = cmc.categories(1, 10, "1027").unwrap();
         assert!(categories.data[0].market_cap > 0.1)
     }
+
+    #[test]
+    fn net_category() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = CmcBuilder::new(apikey).convert_id("1027").build();
+        let category = cmc.category("605e2ce9d41eae1066535f7c", 1, 10).unwrap();
+        assert!(category.volume > 0.1)
+    }
 }
