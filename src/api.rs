@@ -590,9 +590,8 @@ impl Cmc {
             .query(&[("id", id)])
             .query(&[("start", start), ("limit", limit)]);
 
-        let resp = if self.config.currency_id.is_some() {
-            rb.query(&[("convert_id", &self.config.currency_id)])
-                .send()?
+        let resp = if let Some(currency_id) = &self.config.currency_id {
+            rb.query(&[("convert_id", currency_id)]).send()?
         } else {
             rb.query(&[("convert", &self.config.currency)]).send()?
         };
