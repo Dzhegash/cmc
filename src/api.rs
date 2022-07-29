@@ -80,7 +80,7 @@ impl CmcBuilder {
     /// - **Symbol**: Alternatively pass one cryptocurrency symbol. Example: "BTC"
     ///
     /// **NOTE**: `CoinMarketCap recommend utilizing CMC ID instead of cryptocurrency symbols to securely identify cryptocurrencies with other endpoints and in your own application logic`
-    /// (Can be obtained using the method [id_map][id]).
+    /// (Can be obtained using the method [id_map()][id]).
     /// # Example:
     /// ```rust
     /// use cmc::{CmcBuilder, Pass};
@@ -547,10 +547,9 @@ impl Cmc {
     ///     .build();
     ///
     /// match cmc.categories(1, 10, "1027") {
-    ///     Ok(categories) => println!("{}", categories),
-    ///     Err(err) => println!("{}", err),
+    ///     Ok(categories) => println!("{categories}"),
+    ///     Err(err) => println!("{err}"),
     /// }
-    ///
     /// ```
     pub fn categories<T: Into<String>>(
         &self,
@@ -584,6 +583,30 @@ impl Cmc {
         }
     }
 
+    /// Returns information about a single coin category available on CoinMarketCap.
+    ///
+    /// # Examples
+    ///
+    /// Parameters:
+    /// - `id` The Category ID. This can be found using the [categories()].
+    /// - `start` Optionally offset the start (1-based index) of the paginated list of coins to return.
+    /// - `limit` Optionally specify the number of coins to return. Use this parameter and the "start" parameter to determine your own pagination size.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::CmcBuilder;
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .convert("EUR")
+    ///     .build();
+    ///
+    /// match cmc.category("605e2ce9d41eae1066535f7c", 1, 10) {
+    ///     Ok(category) => println!("{category}"),
+    ///     Err(err) => println!("{err}"),
+    /// }
+    /// ```
+    /// [categories()]: ./struct.Cmc.html#method.categories
     pub fn category(&self, id: &str, start: usize, limit: usize) -> CmcResult<Category> {
         let rb = self
             .add_endpoint("v1/cryptocurrency/category")
