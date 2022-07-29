@@ -38,7 +38,7 @@ impl Display for CmcCategories {
         for cc in &self.data {
             let _ = writeln!(
                 f,
-                "Id: {}\nName: {}\nAvg. Price Change: {}\nMarket Cap: {}\nVolume: {}\n-----------------------------",
+                "Id: {}\nName: {}\nAvg Price Change: {}\nMarket Cap: {}\nVolume: {}\n-----------------------------",
                 cc.id ,cc.name, cc.avg_price_change, cc.market_cap, cc.volume
             );
         }

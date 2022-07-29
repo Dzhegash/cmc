@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CmcCategory {
@@ -82,4 +83,26 @@ pub struct Currency {
     pub fully_diluted_market_cap: Value,
     pub tvl: Value,
     pub last_updated: String,
+}
+
+impl Display for Category {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let _ = writeln!(
+            f,
+            "Id: {}\nName: {}\nNum tokens: {}\nAvg Price Change: {}\nMarket Cap: {}\nVolume: {}",
+            self.id,
+            self.name,
+            self.num_tokens,
+            self.avg_price_change,
+            self.market_cap,
+            self.volume
+        );
+
+        let _ = writeln!(f, "Coins:");
+
+        for coin in &self.coins {
+            let _ = writeln!(f, "{}", coin.name);
+        }
+        Ok(())
+    }
 }
