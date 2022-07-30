@@ -54,8 +54,8 @@
 //!     Err(err) => println!("Error: {}", err),
 //! }
 //!
-//! // 3.2 BTC in USD (using id's)
-//! match cmc.price_conversion_id(3.2, "1", None, "2781") {
+//! // 1.6 ETH in XMR (using id's)
+//! match cmc.price_conversion_id(1.6, "1027", None, "328") {
 //!     Ok(price) => println!("Total price: {}", price),
 //!     Err(err) => println!("Error: {}", err),
 //! }
