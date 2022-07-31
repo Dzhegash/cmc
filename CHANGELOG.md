@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## 0.2.1 - 2022-07-31
+### Added
+- `categories()`
+- `category()`
+- Implementations of `Display` for `CmcCategories, Category`
+- Unit tests
+
+### Changed
+- Documentation
 
 ## 0.2.0 - 2022-07-13
 ### Added
