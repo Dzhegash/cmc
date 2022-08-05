@@ -46,7 +46,7 @@ pub struct Metadata {
     pub self_reported_market_cap: Value,
 }
 
-#[derive(Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Urls {
     pub website: Vec<Value>,
     pub twitter: Vec<Value>,
