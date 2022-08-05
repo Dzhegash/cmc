@@ -45,3 +45,17 @@ pub struct Metadata {
     pub self_reported_tags: Value,
     pub self_reported_market_cap: Value,
 }
+
+#[derive(PartialEq, Serialize, Deserialize)]
+pub struct Urls {
+    pub website: Vec<Value>,
+    pub twitter: Vec<Value>,
+    pub message_board: Vec<Value>,
+    pub chat: Vec<Value>,
+    pub facebook: Vec<Value>,
+    pub explorer: Vec<Value>,
+    pub reddit: Vec<Value>,
+    pub technical_doc: Vec<Value>,
+    pub source_code: Vec<Value>,
+    pub announcement: Vec<Value>,
+}
