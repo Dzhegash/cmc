@@ -59,3 +59,12 @@ pub struct Urls {
     pub source_code: Vec<Value>,
     pub announcement: Vec<Value>,
 }
+
+#[derive(PartialEq, Serialize, Deserialize)]
+pub struct Platform {
+    pub id: String,
+    pub name: String,
+    pub slug: String,
+    pub symbol: String,
+    pub token_address: String,
+}
