@@ -60,7 +60,7 @@ pub struct Urls {
     pub announcement: Vec<Value>,
 }
 
-#[derive(PartialEq, Serialize, Deserialize)]
+#[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct Platform {
     pub id: String,
     pub name: String,
