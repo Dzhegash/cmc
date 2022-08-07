@@ -12,6 +12,8 @@ pub enum CmcErrors {
     NullAnswer,
     #[error("API Error: {0}")]
     ApiError(String),
+    #[error("Pass is incompatible with query")]
+    PassIncompatible,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
