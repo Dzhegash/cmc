@@ -23,6 +23,7 @@ pub enum Pass {
     Id,
     Slug,
     Symbol,
+    Address,
 }
 
 #[derive(Clone, Debug)]
@@ -278,6 +279,7 @@ impl Cmc {
             Pass::Symbol => Ok(self.price_by_symbol(&query, currency)?),
             Pass::Id => Ok(self.price_by_id(&query, currency)?),
             Pass::Slug => Ok(self.price_by_slug(&query, currency)?),
+            Pass::Address => Err(CmcErrors::PassIncompatible),
         }
     }
 
@@ -566,6 +568,7 @@ impl Cmc {
             Pass::Symbol => rb.query(&[("symbol", query)]).send()?,
             Pass::Id => rb.query(&[("id", query)]).send()?,
             Pass::Slug => rb.query(&[("slug", query)]).send()?,
+            Pass::Address => return Err(CmcErrors::PassIncompatible),
         };
 
         match resp.status() {
