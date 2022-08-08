@@ -1,6 +1,7 @@
 use crate::api::cryptocurrency::categories::CmcCategories;
 use crate::api::cryptocurrency::category::{Category, CmcCategory};
 use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
+use crate::api::cryptocurrency::metadata_v2::{MDv2, MDv2Symbol, Metadata};
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
 use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
@@ -627,6 +628,47 @@ impl Cmc {
                 let root = resp.json::<CmcCategory>()?;
                 Ok(root.data)
             }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    pub fn metadata<T: Into<String>>(&self, query: T) -> CmcResult<Metadata> {
+        let query = query.into();
+
+        let rb = self.add_endpoint("v2/cryptocurrency/info");
+
+        let resp = match self.config.pass {
+            Pass::Symbol => rb.query(&[("symbol", &query)]).send()?,
+            Pass::Id => rb.query(&[("id", &query)]).send()?,
+            Pass::Slug => rb.query(&[("slug", &query.to_lowercase())]).send()?,
+            Pass::Address => rb.query(&[("address", &query)]).send()?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => match self.config.pass {
+                Pass::Symbol => {
+                    let mut root = resp.json::<MDv2Symbol>()?;
+                    let md_vec = root.data.remove(&query).unwrap();
+                    Ok(md_vec[0].clone())
+                }
+                Pass::Slug | Pass::Address => {
+                    let mut root = resp.json::<MDv2>()?;
+                    let slug_id = root.data.iter().next().unwrap().0.to_owned();
+                    let md = root.data.remove(&slug_id).unwrap();
+                    Ok(md)
+                }
+                Pass::Id => {
+                    let mut root = resp.json::<MDv2>()?;
+                    let md = root.data.remove(&query).unwrap();
+                    Ok(md)
+                }
+            },
             code => {
                 let root = resp.json::<ApiError>()?;
                 Err(CmcErrors::ApiError(format!(
