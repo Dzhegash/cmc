@@ -638,6 +638,9 @@ impl Cmc {
         }
     }
 
+    /// Returns all static metadata available for one or more cryptocurrencies.
+    /// This information includes details like logo, description, official website URL, social links,
+    /// and links to a cryptocurrency's technical documentation.
     pub fn metadata<T: Into<String>>(&self, query: T) -> CmcResult<Metadata> {
         let query = query.into();
 
