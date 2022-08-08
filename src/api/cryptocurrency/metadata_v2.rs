@@ -3,9 +3,15 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CmcMetadata {
+pub struct MDv2 {
     pub status: Status,
     pub data: HashMap<String, Metadata>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct MDv2Symbol {
+    pub status: Status,
+    pub data: HashMap<String, Vec<Metadata>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
