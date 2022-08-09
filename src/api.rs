@@ -641,8 +641,47 @@ impl Cmc {
     /// Returns all static metadata available for one or more cryptocurrencies.
     /// This information includes details like logo, description, official website URL, social links,
     /// and links to a cryptocurrency's technical documentation.
+    ///
+    /// Parameters:
+    ///
+    /// - **Id**: Cryptocurrency coinmarketcap id. Example: "1027"
+    ///
+    /// - **Slug**: Alternatively pass one cryptocurrency slug. Example: "ethereum"
+    ///
+    /// - **Symbol**: Alternatively pass one cryptocurrency symbol. Example: "BTC"
+    ///
+    /// - **Address**: Alternatively pass in a contract address. Example: "0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e"
+    ///
+    /// **NOTE**: `CoinMarketCap recommend utilizing CMC ID instead of cryptocurrency symbols to securely identify cryptocurrencies with other endpoints and in your own application logic`
+    /// (Can be obtained using the method [id_map()][id]).
+    /// ```rust
+    /// use cmc::{CmcBuilder, Pass};
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Id)
+    ///     .build();
+    /// // Cryptocurrency metadata.
+    /// match cmc.metadata("1027") {
+    ///     Ok(metadata) => println!("{}", metadata.description),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Address)
+    ///     .build();
+    /// // Contract address metadata.
+    /// match cmc.metadata("0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e") {
+    ///     Ok(metadata) => println!("{}", metadata.description),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    ///```
+    /// [id]: ./struct.Cmc.html#method.id_map
     pub fn metadata<T: Into<String>>(&self, query: T) -> CmcResult<Metadata> {
         let query = query.into();
+
+        if query.contains(',') {
+            return Err(CmcErrors::IncorrectQuery);
+        }
 
         let rb = self.add_endpoint("v2/cryptocurrency/info");
 
