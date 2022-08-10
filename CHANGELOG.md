@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## 0.2.2 - 2022-08-10
+### Added
+- `metadata()`
+- Unit tests
+
+### Changed
+- CmcErrors
+- Pass
+- Documentation
+
 ## 0.2.1 - 2022-07-31
 ### Added
 - `categories()`
