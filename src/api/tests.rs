@@ -152,4 +152,31 @@ mod network_tests {
         let name = cmc.metadata("1027").unwrap().name;
         assert_eq!("Ethereum", name);
     }
+
+    #[test]
+    fn net_metadata_symbol() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = CmcBuilder::new(apikey).pass(Pass::Symbol).build();
+        let name = cmc.metadata("ETH").unwrap().name;
+        assert_eq!("Ethereum", name);
+    }
+
+    #[test]
+    fn net_metadata_slug() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = CmcBuilder::new(apikey).pass(Pass::Slug).build();
+        let name = cmc.metadata("ethereum").unwrap().name;
+        assert_eq!("Ethereum", name);
+    }
+
+    #[test]
+    fn net_metadata_address() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = CmcBuilder::new(apikey).pass(Pass::Address).build();
+        let name = cmc
+            .metadata("0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e")
+            .unwrap()
+            .name;
+        assert_eq!("Hokkaido Inu", name);
+    }
 }
