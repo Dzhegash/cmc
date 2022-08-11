@@ -62,6 +62,6 @@
 //!```
 //! [coinmarketcap]: https://coinmarketcap.com/api/
 
-pub use self::api::{Cmc, CmcBuilder, Pass, Sort, SortFiat};
 pub mod api;
 mod errors;
+pub use self::api::{Cmc, CmcBuilder, Pass, Sort, SortFiat};

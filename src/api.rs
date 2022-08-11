@@ -56,6 +56,7 @@ impl Default for Config {
     }
 }
 
+/// A `CmcBuilder` can be used to create a `Cmc` with custom configuration.
 pub struct CmcBuilder {
     api_key: String,
     client: Client,

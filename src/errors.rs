@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use thiserror::Error;
 
+/// Errors that may occur when working with the library.
 #[derive(Error, Debug)]
 pub enum CmcErrors {
     #[error("Request Error: {0}")]
