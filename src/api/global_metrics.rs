@@ -1,0 +1,1 @@
+pub mod quotes_latest;
