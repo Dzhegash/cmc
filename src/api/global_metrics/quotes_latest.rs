@@ -1,5 +1,34 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashMap;
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GlobalMetrics {
+    pub active_cryptocurrencies: i64,
+    pub total_cryptocurrencies: i64,
+    pub active_market_pairs: i64,
+    pub active_exchanges: i64,
+    pub total_exchanges: i64,
+    pub eth_dominance: f64,
+    pub btc_dominance: f64,
+    pub eth_dominance_yesterday: f64,
+    pub btc_dominance_yesterday: f64,
+    pub eth_dominance_24h_percentage_change: f64,
+    pub btc_dominance_24h_percentage_change: f64,
+    pub defi_volume_24h: f64,
+    pub defi_volume_24h_reported: f64,
+    pub defi_market_cap: f64,
+    pub defi_24h_percentage_change: f64,
+    pub stablecoin_volume_24h: f64,
+    pub stablecoin_volume_24h_reported: f64,
+    pub stablecoin_market_cap: f64,
+    pub stablecoin_24h_percentage_change: f64,
+    pub derivatives_volume_24h: f64,
+    pub derivatives_volume_24h_reported: f64,
+    pub derivatives_24h_percentage_change: f64,
+    pub quote: HashMap<String, Currency>,
+    pub last_updated: String,
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Currency {
