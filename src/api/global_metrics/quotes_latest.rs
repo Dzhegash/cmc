@@ -3,6 +3,12 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CmcGlobalMetrics {
+    pub status: Status,
+    pub data: GlobalMetrics,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Status {
     pub timestamp: String,
     pub error_code: i64,
