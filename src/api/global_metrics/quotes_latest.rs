@@ -3,6 +3,16 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Status {
+    pub timestamp: String,
+    pub error_code: i64,
+    pub error_message: Value,
+    pub elapsed: i64,
+    pub credit_count: i64,
+    pub notice: Value,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GlobalMetrics {
     pub active_cryptocurrencies: i64,
     pub total_cryptocurrencies: i64,
