@@ -66,8 +66,8 @@ pub struct Currency {
     pub derivatives_volume_24h_reported: f64,
     pub derivatives_24h_percentage_change: f64,
     pub last_updated: String,
-    pub total_market_cap_yesterday: f64,
-    pub total_volume_24h_yesterday: f64,
-    pub total_market_cap_yesterday_percentage_change: f64,
-    pub total_volume_24h_yesterday_percentage_change: f64,
+    pub total_market_cap_yesterday: Option<f64>,
+    pub total_volume_24h_yesterday: Option<f64>,
+    pub total_market_cap_yesterday_percentage_change: Option<f64>,
+    pub total_volume_24h_yesterday_percentage_change: Option<f64>,
 }
