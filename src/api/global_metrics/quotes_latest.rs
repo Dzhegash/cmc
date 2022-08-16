@@ -2,13 +2,13 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CmcGlobalMetrics {
     pub status: Status,
     pub data: GlobalMetrics,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Status {
     pub timestamp: String,
     pub error_code: i64,
@@ -18,7 +18,7 @@ pub struct Status {
     pub notice: Value,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GlobalMetrics {
     pub active_cryptocurrencies: i64,
     pub total_cryptocurrencies: i64,
@@ -46,7 +46,7 @@ pub struct GlobalMetrics {
     pub last_updated: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Currency {
     pub total_market_cap: f64,
     pub total_volume_24h: f64,
