@@ -4,6 +4,7 @@ use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::metadata_v2::{MDv2, MDv2Symbol, Metadata};
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
+use crate::api::global_metrics::quotes_latest::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::{ApiError, CmcErrors};
@@ -12,10 +13,10 @@ use reqwest::StatusCode;
 
 mod cryptocurrency;
 mod fiat;
+mod global_metrics;
 mod key;
 mod tests;
 mod tools;
-mod global_metrics;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
@@ -713,6 +714,30 @@ impl Cmc {
                     Ok(md)
                 }
             },
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    pub fn global_metrics(&self) -> CmcResult<GlobalMetrics> {
+        let rb = self.add_endpoint("v1/global-metrics/quotes/latest");
+
+        let resp = if let Some(currency_id) = &self.config.currency_id {
+            rb.query(&[("convert_id", currency_id)]).send()?
+        } else {
+            rb.query(&[("convert", &self.config.currency)]).send()?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcGlobalMetrics>()?;
+                Ok(root.data)
+            }
             code => {
                 let root = resp.json::<ApiError>()?;
                 Err(CmcErrors::ApiError(format!(
