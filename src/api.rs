@@ -724,6 +724,11 @@ impl Cmc {
         }
     }
 
+    /// Returns the latest global cryptocurrency market metrics. Use the [convert()] to return
+    /// market values in multiple fiat and cryptocurrency conversions in the same call.
+    ///
+    ///
+    /// [convert()]: ./struct.CmcBuilder.html#method.convert
     pub fn global_metrics(&self) -> CmcResult<GlobalMetrics> {
         let rb = self.add_endpoint("v1/global-metrics/quotes/latest");
 
