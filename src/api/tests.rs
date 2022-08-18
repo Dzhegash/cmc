@@ -179,4 +179,14 @@ mod network_tests {
             .name;
         assert_eq!("Hokkaido Inu", name);
     }
+
+    #[test]
+    fn net_global_metrcis_convert() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = CmcBuilder::new(apikey).convert("ETH").build();
+
+        let active_cc = cmc.global_metrics().unwrap().active_cryptocurrencies;
+
+        assert!(active_cc > 0);
+    }
 }
