@@ -727,7 +727,18 @@ impl Cmc {
     /// Returns the latest global cryptocurrency market metrics. Use the [convert()] to return
     /// market values in multiple fiat and cryptocurrency conversions in the same call.
     ///
+    /// ```rust
+    /// use cmc::CmcBuilder;
     ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .convert("EUR")
+    ///     .build();
+    ///
+    /// match cmc.global_metrics() {
+    ///     Ok(gm) => println!("{}", gm.btc_dominance),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
     /// [convert()]: ./struct.CmcBuilder.html#method.convert
     pub fn global_metrics(&self) -> CmcResult<GlobalMetrics> {
         let rb = self.add_endpoint("v1/global-metrics/quotes/latest");
