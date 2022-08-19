@@ -189,4 +189,20 @@ mod network_tests {
 
         assert!(active_cc > 0);
     }
+
+    #[test]
+    fn net_global_metrcis_convert_id() {
+        let apikey = env::var("CMC_API").unwrap();
+        let cmc = CmcBuilder::new(apikey).convert_id("1027").build();
+
+        let total = cmc
+            .global_metrics()
+            .unwrap()
+            .quote
+            .get("1027")
+            .unwrap()
+            .total_market_cap;
+
+        assert!(total > 1.0);
+    }
 }
