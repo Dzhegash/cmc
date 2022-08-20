@@ -53,21 +53,17 @@ mod deserialize_tests {
 #[cfg(test)]
 mod network_tests {
     use crate::{Cmc, CmcBuilder, Pass, Sort, SortFiat};
-    use std::env;
+    const APIKEY: &str = env!("CMC_API");
 
     #[test]
     fn net_price() {
-        let apikey = env::var("CMC_API").unwrap();
-
-        let cmc = Cmc::new(apikey);
+        let cmc = Cmc::new(APIKEY);
         assert!(cmc.price("BTC").unwrap() > 0.1)
     }
 
     #[test]
     fn net_price_id() {
-        let apikey = env::var("CMC_API").unwrap();
-
-        let cmc = CmcBuilder::new(apikey)
+        let cmc = CmcBuilder::new(APIKEY)
             .pass(Pass::Id)
             .convert("EUR")
             .build();
@@ -77,9 +73,7 @@ mod network_tests {
 
     #[test]
     fn net_price_slug() {
-        let apikey = env::var("CMC_API").unwrap();
-
-        let cmc = CmcBuilder::new(apikey)
+        let cmc = CmcBuilder::new(APIKEY)
             .pass(Pass::Slug)
             .convert("EUR")
             .build();
@@ -89,17 +83,14 @@ mod network_tests {
 
     #[test]
     fn net_key_info() {
-        let apikey = env::var("CMC_API").unwrap();
-
-        let cmc = Cmc::new(apikey);
+        let cmc = Cmc::new(APIKEY);
         let key_info = cmc.key_info().unwrap();
         assert!(key_info.plan.credit_limit_daily > 0);
     }
 
     #[test]
     fn net_id_map() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = Cmc::new(apikey);
+        let cmc = Cmc::new(APIKEY);
         let map = cmc.id_map(1, 10, Sort::CmcRank).unwrap();
         assert_eq!(map.data[1].id, 1027);
         assert_eq!(map.data[1].slug, "ethereum");
@@ -107,72 +98,63 @@ mod network_tests {
 
     #[test]
     fn net_id_map_fiat() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = Cmc::new(apikey);
+        let cmc = Cmc::new(APIKEY);
         let map = cmc.id_map_fiat(1, 10, SortFiat::Id).unwrap();
         assert_eq!(map.data[0].symbol, "USD");
     }
 
     #[test]
     fn net_price_conversion() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = Cmc::new(apikey);
+        let cmc = Cmc::new(APIKEY);
         let price = cmc.price_conversion(2.5, "BTC", None, "usd").unwrap();
         assert!(price > 0.1);
     }
 
     #[test]
     fn net_price_conversion_id() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = Cmc::new(apikey);
+        let cmc = Cmc::new(APIKEY);
         let price = cmc.price_conversion_id(2.5, "1", None, "2781").unwrap();
         assert!(price > 0.1);
     }
 
     #[test]
     fn net_categories() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).pass(Pass::Id).build();
+        let cmc = CmcBuilder::new(APIKEY).pass(Pass::Id).build();
         let categories = cmc.categories(1, 10, "1027").unwrap();
         assert!(categories.data[0].market_cap > 0.1)
     }
 
     #[test]
     fn net_category() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).convert_id("1027").build();
+        let cmc = CmcBuilder::new(APIKEY).convert_id("1027").build();
         let category = cmc.category("605e2ce9d41eae1066535f7c", 1, 10).unwrap();
         assert!(category.volume > 0.1)
     }
 
     #[test]
     fn net_metadata_id() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).pass(Pass::Id).build();
+        let cmc = CmcBuilder::new(APIKEY).pass(Pass::Id).build();
         let name = cmc.metadata("1027").unwrap().name;
         assert_eq!("Ethereum", name);
     }
 
     #[test]
     fn net_metadata_symbol() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).pass(Pass::Symbol).build();
+        let cmc = CmcBuilder::new(APIKEY).pass(Pass::Symbol).build();
         let name = cmc.metadata("ETH").unwrap().name;
         assert_eq!("Ethereum", name);
     }
 
     #[test]
     fn net_metadata_slug() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).pass(Pass::Slug).build();
+        let cmc = CmcBuilder::new(APIKEY).pass(Pass::Slug).build();
         let name = cmc.metadata("ethereum").unwrap().name;
         assert_eq!("Ethereum", name);
     }
 
     #[test]
     fn net_metadata_address() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).pass(Pass::Address).build();
+        let cmc = CmcBuilder::new(APIKEY).pass(Pass::Address).build();
         let name = cmc
             .metadata("0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e")
             .unwrap()
@@ -181,9 +163,8 @@ mod network_tests {
     }
 
     #[test]
-    fn net_global_metrcis_convert() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).convert("ETH").build();
+    fn net_global_metrics_convert() {
+        let cmc = CmcBuilder::new(APIKEY).convert("ETH").build();
 
         let active_cc = cmc.global_metrics().unwrap().active_cryptocurrencies;
 
@@ -191,9 +172,8 @@ mod network_tests {
     }
 
     #[test]
-    fn net_global_metrcis_convert_id() {
-        let apikey = env::var("CMC_API").unwrap();
-        let cmc = CmcBuilder::new(apikey).convert_id("1027").build();
+    fn net_global_metrics_convert_id() {
+        let cmc = CmcBuilder::new(APIKEY).convert_id("1027").build();
 
         let total = cmc
             .global_metrics()
