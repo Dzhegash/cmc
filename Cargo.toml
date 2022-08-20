@@ -1,7 +1,7 @@
 [package]
 name = "cmc"
 edition = "2021"
-version = "0.2.3-alpha.2"
+version = "0.2.3"
 authors = ["Dzhegash <dzhegash@gmail.com>"]
 license = "MIT OR Apache-2.0"
 description = "Rust Library for the CoinMarketCap API"
