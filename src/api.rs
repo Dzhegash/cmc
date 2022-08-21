@@ -17,6 +17,7 @@ mod global_metrics;
 mod key;
 mod tests;
 mod tools;
+mod exchange;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
