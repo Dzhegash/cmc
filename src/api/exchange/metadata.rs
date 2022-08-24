@@ -15,14 +15,14 @@ pub struct Exchange {
     pub tags: Value,
     #[serde(rename = "type")]
     pub type_field: String,
-    pub date_launched: String,
+    pub date_launched: Value,
     pub is_hidden: i64,
     pub is_redistributable: Value,
     pub maker_fee: f64,
     pub taker_fee: f64,
-    pub spot_volume_usd: f64,
-    pub spot_volume_last_updated: String,
-    pub weekly_visits: i64,
+    pub spot_volume_usd: Value,
+    pub spot_volume_last_updated: Value,
+    pub weekly_visits: Value,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
