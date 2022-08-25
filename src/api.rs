@@ -136,7 +136,7 @@ impl CmcBuilder {
     }
 }
 
-/// A `Cmc` can be used to create a CMC client with default configuration.
+/// A `Cmc` can be used to create a CoinMarketCap client with default configuration.
 #[derive(Clone, Debug)]
 pub struct Cmc {
     api_key: String,
