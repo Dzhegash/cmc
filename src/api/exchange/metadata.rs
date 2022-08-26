@@ -3,7 +3,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Metadata {
+pub struct ExchangeMetadata {
     pub status: Status,
     pub data: HashMap<String, Exchange>,
 }
