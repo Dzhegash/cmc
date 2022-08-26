@@ -3,6 +3,7 @@ use crate::api::cryptocurrency::category::{Category, CmcCategory};
 use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::metadata_v2::{MDv2, MDv2Symbol, Metadata};
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
+use crate::api::exchange::metadata::ExchangeMetadata;
 use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
 use crate::api::global_metrics::quotes_latest::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
@@ -12,12 +13,12 @@ use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
 
 mod cryptocurrency;
+mod exchange;
 mod fiat;
 mod global_metrics;
 mod key;
 mod tests;
 mod tools;
-mod exchange;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
@@ -755,6 +756,33 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<CmcGlobalMetrics>()?;
                 Ok(root.data)
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    pub fn exchange_metadata<T: Into<String>>(&self, exch: T) -> CmcResult<ExchangeMetadata> {
+        let exchange = exch.into();
+
+        let rb = self.add_endpoint("v1/exchange/info");
+
+        let resp = match self.config.pass {
+            Pass::Symbol => return Err(CmcErrors::PassIncompatible),
+            Pass::Id => rb.query(&[("id", &exchange)]).send()?,
+            Pass::Slug => rb.query(&[("slug", &exchange.to_lowercase())]).send()?,
+            Pass::Address => return Err(CmcErrors::PassIncompatible),
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<ExchangeMetadata>()?;
+                Ok(root)
             }
             code => {
                 let root = resp.json::<ApiError>()?;
