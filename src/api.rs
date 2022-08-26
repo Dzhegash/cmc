@@ -767,6 +767,8 @@ impl Cmc {
         }
     }
 
+    /// Returns all static metadata for one or more exchanges. This information includes details
+    /// like launch date, logo, official website URL, social links, and market fee documentation URL.
     pub fn exchange_metadata<T: Into<String>>(&self, exchange: T) -> CmcResult<ExchangeMetadata> {
         let exchange = exchange.into();
 
