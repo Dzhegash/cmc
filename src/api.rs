@@ -767,8 +767,8 @@ impl Cmc {
         }
     }
 
-    pub fn exchange_metadata<T: Into<String>>(&self, exch: T) -> CmcResult<ExchangeMetadata> {
-        let exchange = exch.into();
+    pub fn exchange_metadata<T: Into<String>>(&self, exchange: T) -> CmcResult<ExchangeMetadata> {
+        let exchange = exchange.into();
 
         let rb = self.add_endpoint("v1/exchange/info");
 
