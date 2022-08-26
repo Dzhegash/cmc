@@ -185,4 +185,15 @@ mod network_tests {
 
         assert!(total > 1.0);
     }
+
+    #[test]
+    fn net_exchange_metadata_id() {
+        let cmc = CmcBuilder::new(APIKEY).pass(Pass::Id).build();
+
+        let metadata = cmc.exchange_metadata("270").unwrap().data;
+
+        let name = &metadata.get("270").unwrap().name;
+
+        assert_eq!(name, "Binance");
+    }
 }
