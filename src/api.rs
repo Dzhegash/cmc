@@ -160,14 +160,12 @@ impl Cmc {
 
     /// Returns a mapping of all cryptocurrencies to unique CoinMarketCap ids.
     ///
-    /// # Examples
+    /// # Example:
     ///
     /// Parameters:
     /// - `start` Offset the start.
     /// - `limit` Specify the number of results to return.
     /// - `sort` What field to sort the list of cryptocurrencies by.
-    ///
-    /// Basic usage:
     ///
     /// ```rust
     /// use cmc::{Cmc, Sort};
@@ -206,7 +204,7 @@ impl Cmc {
 
     /// Returns a mapping of all supported fiat currencies to unique CoinMarketCap ids.
     ///
-    /// # Examples
+    /// # Example:
     ///
     /// Parameters:
     /// - `start` Offset the start.
@@ -256,9 +254,8 @@ impl Cmc {
     }
 
     /// Latest price for cryptocurrency in USD.
-    /// # Examples
     ///
-    /// Basic usage:
+    /// # Example:
     ///
     /// ```rust
     /// use cmc::Cmc;
@@ -409,7 +406,7 @@ impl Cmc {
     /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
     /// utilizing the latest market rate for each currency.
     ///
-    /// # Examples
+    /// # Example:
     ///
     /// Parameters:
     /// - `amount` An amount of currency to convert.
@@ -474,7 +471,7 @@ impl Cmc {
     /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
     /// utilizing the latest market rate for each currency.
     ///
-    /// # Examples
+    /// # Example:
     ///
     /// Parameters:
     /// - `amount` An amount of currency to convert.
@@ -539,7 +536,7 @@ impl Cmc {
 
     /// Returns information about all coin categories available on CoinMarketCap.
     ///
-    /// # Examples
+    /// # Example:
     ///
     /// Parameters:
     /// - `start` Optionally offset the start (1-based index) of the paginated list of items to return.
@@ -595,7 +592,7 @@ impl Cmc {
 
     /// Returns information about a single coin category available on CoinMarketCap.
     ///
-    /// # Examples
+    /// # Example:
     ///
     /// Parameters:
     /// - `id` The Category ID. This can be found using the [categories()].
@@ -769,6 +766,39 @@ impl Cmc {
 
     /// Returns all static metadata for one or more exchanges. This information includes details
     /// like launch date, logo, official website URL, social links, and market fee documentation URL.
+    ///
+    /// # Examples:
+    ///
+    /// Parameters:
+    ///
+    /// - **Id**: One or more comma-separated CoinMarketCap cryptocurrency exchange ids. Example: "270,271"
+    ///
+    /// - **Slug**: Alternatively, one or more comma-separated exchange names in URL friendly
+    ///   shorthand "slug" format (all lowercase, spaces replaced with hyphens). Example: "binance,gdax".
+    ///
+    /// ```rust
+    /// use cmc::{CmcBuilder, Pass};
+    ///
+    /// // using Id
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Id)
+    ///     .build();
+    ///
+    /// match cmc.exchange_metadata("270") {
+    ///     Ok(metadata) => println!("{}", metadata.data.get("270").unwrap().name),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    ///
+    /// // using Slug
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Slug)
+    ///     .build();
+    ///
+    /// match cmc.exchange_metadata("binance") {
+    ///     Ok(metadata) => println!("{}", metadata.data.get("binance").unwrap().name),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
     pub fn exchange_metadata<T: Into<String>>(&self, exchange: T) -> CmcResult<ExchangeMetadata> {
         let exchange = exchange.into();
 
