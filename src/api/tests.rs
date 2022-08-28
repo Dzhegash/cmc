@@ -196,4 +196,15 @@ mod network_tests {
 
         assert_eq!(name, "Binance");
     }
+
+    #[test]
+    fn net_exchange_metadata_slug() {
+        let cmc = CmcBuilder::new(APIKEY).pass(Pass::Slug).build();
+
+        let metadata = cmc.exchange_metadata("binance").unwrap().data;
+
+        let name = &metadata.get("binance").unwrap().name;
+
+        assert_eq!(name, "Binance");
+    }
 }
