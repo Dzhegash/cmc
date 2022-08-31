@@ -1,6 +1,11 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CmcExchangeIdMap {
+    pub status: Status,
+    pub data: Vec<Exchange>,
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Status {
