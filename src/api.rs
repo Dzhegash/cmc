@@ -385,6 +385,7 @@ impl Cmc {
         }
     }
 
+    /// Returns the latest market quote for 1 or more cryptocurrencies.
     pub fn prices_by_id<T: Into<String>>(&self, ids: T) -> CmcResult<QLv2Id> {
         let ids = ids.into();
 
