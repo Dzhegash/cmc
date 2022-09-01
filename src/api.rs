@@ -385,6 +385,34 @@ impl Cmc {
         }
     }
 
+    pub fn prices_by_id<T: Into<String>>(&self, ids: T) -> CmcResult<QLv2Id> {
+        let ids = ids.into();
+
+        let rb = self
+            .add_endpoint("v2/cryptocurrency/quotes/latest")
+            .query(&[("id", ids)]);
+
+        let resp = if let Some(currency_id) = &self.config.currency_id {
+            rb.query(&[("convert_id", currency_id)]).send()?
+        } else {
+            rb.query(&[("convert", &self.config.currency)]).send()?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<QLv2Id>()?;
+                Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
     /// Returns API key details and usage stats.
     pub fn key_info(&self) -> CmcResult<KeyInfo> {
         let resp = self.add_endpoint("v1/key/info").send()?;
