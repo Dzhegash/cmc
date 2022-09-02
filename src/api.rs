@@ -385,7 +385,7 @@ impl Cmc {
         }
     }
 
-    /// Returns the latest market quote for 1 or more cryptocurrencies.
+    /// Returns the latest market quote for 1 or more cryptocurrencies (using id's).
     pub fn quotes_latest_by_id<T: Into<String>>(&self, ids: T) -> CmcResult<QLv2Id> {
         let ids = ids.into();
 
@@ -414,6 +414,7 @@ impl Cmc {
         }
     }
 
+    /// Returns the latest market quote for 1 or more cryptocurrencies (using slug's).
     pub fn quotes_latest_by_slug<T: Into<String>>(&self, slugs: T) -> CmcResult<QLv2Slug> {
         let slugs = slugs.into();
 
