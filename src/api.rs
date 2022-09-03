@@ -443,6 +443,7 @@ impl Cmc {
         }
     }
 
+    /// Returns the latest market quote for 1 or more cryptocurrencies (using symbol's).
     pub fn quotes_latest_by_symbol<T: Into<String>>(&self, symbols: T) -> CmcResult<QLv2Symbol> {
         let symbols = symbols.into();
 
