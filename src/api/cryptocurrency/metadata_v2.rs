@@ -35,11 +35,11 @@ pub struct Metadata {
     pub logo: String,
     pub subreddit: String,
     pub notice: String,
-    pub tags: Vec<String>,
+    pub tags: Option<Vec<String>>,
     #[serde(rename = "tag-names")]
-    pub tag_names: Vec<String>,
+    pub tag_names: Option<Vec<String>>,
     #[serde(rename = "tag-groups")]
-    pub tag_groups: Vec<String>,
+    pub tag_groups: Option<Vec<String>>,
     pub urls: Urls,
     pub platform: Option<Platform>,
     pub date_added: String,
