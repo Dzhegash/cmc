@@ -207,4 +207,20 @@ mod network_tests {
 
         assert_eq!(name, "Binance");
     }
+
+    #[test]
+    fn net_quotes_latest_by_id() {
+        let cmc = Cmc::new(APIKEY);
+        let price = cmc
+            .quotes_latest_by_id("1027")
+            .unwrap()
+            .data
+            .get("1027")
+            .unwrap()
+            .quote
+            .get("USD")
+            .unwrap()
+            .price;
+        assert!(price > 0.1);
+    }
 }
