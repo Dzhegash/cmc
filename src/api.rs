@@ -51,6 +51,13 @@ pub enum SortExchange {
 }
 
 #[derive(Clone, Debug)]
+pub enum ListingStatusExchange {
+    Active,
+    Inactive,
+    Untracked,
+}
+
+#[derive(Clone, Debug)]
 struct Config {
     pass: Pass,
     currency: String,
