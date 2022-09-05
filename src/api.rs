@@ -926,4 +926,48 @@ impl Cmc {
             }
         }
     }
+
+    pub fn exchange_id_map(
+        &self,
+        listing_status: ListingStatusExchange,
+        start: usize,
+        limit: usize,
+        sort: SortExchange,
+        crypto_id: Option<&str>,
+    ) -> CmcResult<CmcExchangeIdMap> {
+        let rb = self
+            .add_endpoint("v1/exchange/map")
+            .query(&[("start", start), ("limit", limit)]);
+
+        let rb = match listing_status {
+            ListingStatusExchange::Active => rb.query(&[("listing_status", "active")]),
+            ListingStatusExchange::Inactive => rb.query(&[("listing_status", "inactive")]),
+            ListingStatusExchange::Untracked => rb.query(&[("listing_status", "untracked")]),
+        };
+
+        let rb = match sort {
+            SortExchange::Id => rb.query(&[("sort", "id")]),
+            SortExchange::Volume24h => rb.query(&[("sort", "volume_24h")]),
+        };
+
+        let resp = if let Some(id) = crypto_id {
+            rb.query(&[("crypto_id", id)]).send()?
+        } else {
+            rb.send()?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcExchangeIdMap>()?;
+                Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>()?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
 }

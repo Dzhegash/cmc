@@ -64,4 +64,4 @@
 
 pub mod api;
 mod errors;
-pub use self::api::{Cmc, CmcBuilder, Pass, Sort, SortFiat};
+pub use self::api::{Cmc, CmcBuilder, ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
