@@ -3,6 +3,7 @@ use crate::api::cryptocurrency::category::{Category, CmcCategory};
 use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
 use crate::api::cryptocurrency::metadata_v2::{MDv2, MDv2Symbol, Metadata};
 use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
+use crate::api::exchange::id_map::CmcExchangeIdMap;
 use crate::api::exchange::metadata::ExchangeMetadata;
 use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
 use crate::api::global_metrics::quotes_latest::{CmcGlobalMetrics, GlobalMetrics};
@@ -41,6 +42,12 @@ pub enum Sort {
 pub enum SortFiat {
     Id,
     Name,
+}
+
+#[derive(Clone, Debug)]
+pub enum SortExchange {
+    Id,
+    Volume24h,
 }
 
 #[derive(Clone, Debug)]
