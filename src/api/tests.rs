@@ -223,4 +223,20 @@ mod network_tests {
             .price;
         assert!(price > 0.1);
     }
+
+    #[test]
+    fn net_quotes_latest_by_slug() {
+        let cmc = Cmc::new(APIKEY);
+        let price = cmc
+            .quotes_latest_by_slug("ethereum")
+            .unwrap()
+            .data
+            .get("1027")
+            .unwrap()
+            .quote
+            .get("USD")
+            .unwrap()
+            .price;
+        assert!(price > 0.1);
+    }
 }
