@@ -239,4 +239,20 @@ mod network_tests {
             .price;
         assert!(price > 0.1);
     }
+
+    #[test]
+    fn net_quotes_latest_by_symbol() {
+        let cmc = Cmc::new(APIKEY);
+        let price = cmc
+            .quotes_latest_by_symbol("ETH")
+            .unwrap()
+            .data
+            .get("ETH")
+            .unwrap()[0]
+            .quote
+            .get("USD")
+            .unwrap()
+            .price;
+        assert!(price > 0.1);
+    }
 }
