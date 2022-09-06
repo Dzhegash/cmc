@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CmcExchangeIdMap {
@@ -25,4 +26,17 @@ pub struct Exchange {
     pub is_active: i64,
     pub first_historical_data: String,
     pub last_historical_data: String,
+}
+
+impl Display for CmcExchangeIdMap {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        for e in &self.data {
+            let _ = writeln!(
+                f,
+                "Id: {}\nName: {}\nSlug: {}\nIs Active: {}\n---------------",
+                e.id, e.name, e.slug, e.is_active
+            );
+        }
+        Ok(())
+    }
 }
