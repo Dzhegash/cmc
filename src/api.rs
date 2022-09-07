@@ -927,6 +927,38 @@ impl Cmc {
         }
     }
 
+    /// Returns a paginated list of all active cryptocurrency exchanges by CoinMarketCap ID.
+    ///
+    /// # Examples:
+    ///
+    /// Parameters:
+    ///
+    /// - `listing_status`:
+    ///
+    ///  **Active**: Only active exchanges are returned.
+    ///
+    ///  **Inactive**: List of exchanges that are no longer active.
+    ///
+    ///  **Untracked**: List of exchanges that are registered but do not currently meet methodology requirements to have active markets tracked.
+    ///
+    /// - `start`: Optionally offset the start (1-based index) of the paginated list of items to return.
+    ///
+    /// - `limit`: Optionally specify the number of results to return. Use this parameter and the "start" parameter to determine your own pagination size.
+    ///
+    /// - `sort`: What field to sort the list of exchanges by.
+    ///
+    /// - `crypto_id`: Optionally include one fiat or cryptocurrency IDs to filter market pairs by.
+    ///
+    /// ```rust
+    /// use cmc::{Cmc, ListingStatusExchange, SortExchange};
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// match cmc.exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id, None) {
+    ///     Ok(map) => println!("{}", map),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
     pub fn exchange_id_map(
         &self,
         listing_status: ListingStatusExchange,
