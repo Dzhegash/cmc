@@ -52,7 +52,7 @@ mod deserialize_tests {
 
 #[cfg(test)]
 mod network_tests {
-    use crate::{Cmc, CmcBuilder, Pass, Sort, SortFiat};
+    use crate::{Cmc, CmcBuilder, ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
     const APIKEY: &str = env!("CMC_API");
 
     #[test]
@@ -221,6 +221,7 @@ mod network_tests {
             .get("USD")
             .unwrap()
             .price;
+
         assert!(price > 0.1);
     }
 
@@ -237,6 +238,7 @@ mod network_tests {
             .get("USD")
             .unwrap()
             .price;
+
         assert!(price > 0.1);
     }
 
@@ -253,6 +255,19 @@ mod network_tests {
             .get("USD")
             .unwrap()
             .price;
+
         assert!(price > 0.1);
+    }
+
+    #[test]
+    fn net_exchange_id_map() {
+        let cmc = Cmc::new(APIKEY);
+        let id = cmc
+            .exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id, None)
+            .unwrap()
+            .data[0]
+            .id;
+
+        assert_eq!(16, id);
     }
 }
