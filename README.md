@@ -75,6 +75,23 @@ match cmc.price_conversion_id(1.6, "1027", None, "328") {
 }
 ```
 
+#### Exchange ID Map
+
+```rust
+use cmc::{Cmc, ListingStatusExchange, SortExchange};
+
+let cmc = Cmc::new("<API KEY>");
+
+match cmc.exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id, None) {
+    Ok(map) => println!("{}", map),
+    Err(err) => println!("{}", err),
+}
+```
+___
+
+##### See the documentation for the rest.
+___
+
 
 ## License
 
