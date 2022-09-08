@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## 0.2.4 - 2022-09-08
+### Added
+- `SortExchange`
+- `ListingStatusExchange`
+- `exchange_metadata()`
+- `exchange_id_map()`
+- `quotes_latest_by_id()`
+- `quotes_latest_by_slug()`
+- `quotes_latest_by_symbol()`
+- `Display` implementation for `CmcExchangeIdMap`
+- Unit tests
+- Documentation
+
+### Changed
+- `api::cryptocurrency::metadata_v2::Metadata`
+
 ## 0.2.3 - 2022-08-20
 ### Added
 - `global_metrics()`
