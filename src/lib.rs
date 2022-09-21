@@ -60,8 +60,21 @@
 //!     Err(err) => println!("Error: {}", err),
 //! }
 //!```
+//!
+//! ## Exchange ID Map
+//!```rust
+//! use cmc::{Cmc, ListingStatusExchange, SortExchange};
+//!
+//! let cmc = Cmc::new("<API KEY>");
+//!
+//! match cmc.exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id, None) {
+//!     Ok(map) => println!("{}", map),
+//!     Err(err) => println!("{}", err),
+//! }
+//!```
 //! [coinmarketcap]: https://coinmarketcap.com/api/
 
 pub mod api;
-mod errors;
+pub mod errors;
+#[doc(inline)]
 pub use self::api::{Cmc, CmcBuilder, ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
