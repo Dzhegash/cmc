@@ -3,7 +3,7 @@ use serde_json::Value;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CmcIdMapFiat {
+pub struct CmcFiatIdMap {
     pub status: Status,
     pub data: Vec<Currency>,
 }
@@ -26,7 +26,7 @@ pub struct Currency {
     pub symbol: String,
 }
 
-impl Display for CmcIdMapFiat {
+impl Display for CmcFiatIdMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         for fc in &self.data {
             let _ = writeln!(
