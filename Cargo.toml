@@ -11,6 +11,11 @@ documentation = "https://docs.rs/crate/cmc/"
 repository = "https://github.com/dzhegash/cmc"
 readme = "README.md"
 
+[features]
+default = ["cryptocurrency", "fiat"]
+cryptocurrency = []
+fiat = []
+
 [dependencies]
 serde = { version = "1.0.137", features = ["derive"] }
 serde_json = { version = "1.0.81", features = ["float_roundtrip"] }

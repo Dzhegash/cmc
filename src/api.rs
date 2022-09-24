@@ -1,11 +1,5 @@
-use crate::api::cryptocurrency::categories::CmcCategories;
-use crate::api::cryptocurrency::category::{Category, CmcCategory};
-use crate::api::cryptocurrency::coinmarketcap_id_map::CmcIdMap;
-use crate::api::cryptocurrency::metadata_v2::{MDv2, MDv2Symbol, Metadata};
-use crate::api::cryptocurrency::quotes_latest_v2::{QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::exchange::id_map::CmcExchangeIdMap;
 use crate::api::exchange::metadata::ExchangeMetadata;
-use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
 use crate::api::global_metrics::quotes_latest::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
@@ -13,9 +7,18 @@ use crate::errors::{ApiError, CmcErrors};
 use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
 
+#[cfg(feature = "cryptocurrency")]
 mod cryptocurrency;
+#[cfg(feature = "cryptocurrency")]
+use crate::api::cryptocurrency::*;
+
 mod exchange;
+
+#[cfg(feature = "fiat")]
 mod fiat;
+#[cfg(feature = "fiat")]
+use crate::api::fiat::*;
+
 mod global_metrics;
 mod key;
 mod tests;
@@ -191,6 +194,7 @@ impl Cmc {
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
+    #[cfg(feature = "cryptocurrency")]
     pub fn id_map(&self, start: usize, limit: usize, sort: Sort) -> CmcResult<CmcIdMap> {
         let rb = self
             .add_endpoint("v1/cryptocurrency/map")
@@ -237,6 +241,7 @@ impl Cmc {
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
+    #[cfg(feature = "fiat")]
     pub fn id_map_fiat(
         &self,
         start: usize,
@@ -281,6 +286,7 @@ impl Cmc {
     ///     Err(err) => println!("Error: {}", err),
     /// }
     /// ```
+    #[cfg(feature = "cryptocurrency")]
     pub fn price<T: Into<String>>(&self, query: T) -> CmcResult<f64> {
         let query = query.into();
         if query.contains(',') {
@@ -301,6 +307,7 @@ impl Cmc {
         }
     }
 
+    #[cfg(feature = "cryptocurrency")]
     fn price_by_id(&self, id: &str, currency: &str) -> CmcResult<f64> {
         let rb = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
@@ -335,6 +342,7 @@ impl Cmc {
         }
     }
 
+    #[cfg(feature = "cryptocurrency")]
     fn price_by_slug(&self, slug: &str, currency: &str) -> CmcResult<f64> {
         let rb = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
@@ -369,6 +377,7 @@ impl Cmc {
         }
     }
 
+    #[cfg(feature = "cryptocurrency")]
     fn price_by_symbol(&self, symbol: &str, currency: &str) -> CmcResult<f64> {
         let rb = self
             .add_endpoint("v2/cryptocurrency/quotes/latest")
@@ -400,6 +409,7 @@ impl Cmc {
     }
 
     /// Returns the latest market quote for 1 or more cryptocurrencies (using id's).
+    #[cfg(feature = "cryptocurrency")]
     pub fn quotes_latest_by_id<T: Into<String>>(&self, ids: T) -> CmcResult<QLv2Id> {
         let ids = ids.into();
 
@@ -429,6 +439,7 @@ impl Cmc {
     }
 
     /// Returns the latest market quote for 1 or more cryptocurrencies (using slug's).
+    #[cfg(feature = "cryptocurrency")]
     pub fn quotes_latest_by_slug<T: Into<String>>(&self, slugs: T) -> CmcResult<QLv2Slug> {
         let slugs = slugs.into();
 
@@ -458,6 +469,7 @@ impl Cmc {
     }
 
     /// Returns the latest market quote for 1 or more cryptocurrencies (using symbol's).
+    #[cfg(feature = "cryptocurrency")]
     pub fn quotes_latest_by_symbol<T: Into<String>>(&self, symbols: T) -> CmcResult<QLv2Symbol> {
         let symbols = symbols.into();
 
@@ -658,6 +670,7 @@ impl Cmc {
     ///     Err(err) => println!("{err}"),
     /// }
     /// ```
+    #[cfg(feature = "cryptocurrency")]
     pub fn categories<T: Into<String>>(
         &self,
         start: usize,
@@ -715,6 +728,7 @@ impl Cmc {
     /// }
     /// ```
     /// [categories()]: ./struct.Cmc.html#method.categories
+    #[cfg(feature = "cryptocurrency")]
     pub fn category(&self, id: &str, start: usize, limit: usize) -> CmcResult<Category> {
         let rb = self
             .add_endpoint("v1/cryptocurrency/category")
@@ -780,6 +794,7 @@ impl Cmc {
     /// }
     ///```
     /// [id]: ./struct.Cmc.html#method.id_map
+    #[cfg(feature = "cryptocurrency")]
     pub fn metadata<T: Into<String>>(&self, query: T) -> CmcResult<Metadata> {
         let query = query.into();
 
