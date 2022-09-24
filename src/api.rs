@@ -220,6 +220,18 @@ impl Cmc {
         }
     }
 
+    #[doc(hidden)]
+    #[deprecated(since = "0.3.0", note = "Use `fiat_id_map()` instead")]
+    #[cfg(feature = "fiat")]
+    pub fn id_map_fiat(
+        &self,
+        start: usize,
+        limit: usize,
+        sort: SortFiat,
+    ) -> CmcResult<CmcIdMapFiat> {
+        Cmc::fiat_id_map(self, start, limit, sort)
+    }
+
     /// Returns a mapping of all supported fiat currencies to unique CoinMarketCap ids.
     ///
     /// # Example:
@@ -236,13 +248,13 @@ impl Cmc {
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
-    /// match cmc.id_map_fiat(1, 100, SortFiat::Name) {
+    /// match cmc.fiat_id_map(1, 100, SortFiat::Name) {
     ///     Ok(map) => println!("{}", map),
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
     #[cfg(feature = "fiat")]
-    pub fn id_map_fiat(
+    pub fn fiat_id_map(
         &self,
         start: usize,
         limit: usize,

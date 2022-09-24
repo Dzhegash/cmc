@@ -97,9 +97,9 @@ mod network_tests {
     }
 
     #[test]
-    fn net_id_map_fiat() {
+    fn net_fiat_id_map() {
         let cmc = Cmc::new(APIKEY);
-        let map = cmc.id_map_fiat(1, 10, SortFiat::Id).unwrap();
+        let map = cmc.fiat_id_map(1, 10, SortFiat::Id).unwrap();
         assert_eq!(map.data[0].symbol, "USD");
     }
 
