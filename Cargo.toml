@@ -12,8 +12,9 @@ repository = "https://github.com/dzhegash/cmc"
 readme = "README.md"
 
 [features]
-default = ["cryptocurrency", "fiat"]
+default = ["cryptocurrency", "exchange", "fiat"]
 cryptocurrency = []
+exchange = []
 fiat = []
 
 [dependencies]

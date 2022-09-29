@@ -1,5 +1,3 @@
-use crate::api::exchange::id_map::CmcExchangeIdMap;
-use crate::api::exchange::metadata::ExchangeMetadata;
 use crate::api::global_metrics::quotes_latest::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
@@ -12,7 +10,10 @@ mod cryptocurrency;
 #[cfg(feature = "cryptocurrency")]
 use crate::api::cryptocurrency::*;
 
+#[cfg(feature = "exchange")]
 mod exchange;
+#[cfg(feature = "exchange")]
+use crate::api::exchange::*;
 
 #[cfg(feature = "fiat")]
 mod fiat;
@@ -228,7 +229,7 @@ impl Cmc {
         start: usize,
         limit: usize,
         sort: SortFiat,
-    ) -> CmcResult<CmcIdMapFiat> {
+    ) -> CmcResult<CmcFiatIdMap> {
         Cmc::fiat_id_map(self, start, limit, sort)
     }
 
@@ -259,7 +260,7 @@ impl Cmc {
         start: usize,
         limit: usize,
         sort: SortFiat,
-    ) -> CmcResult<CmcIdMapFiat> {
+    ) -> CmcResult<CmcFiatIdMap> {
         let rb = self
             .add_endpoint("v1/fiat/map")
             .query(&[("start", start), ("limit", limit)]);
@@ -271,7 +272,7 @@ impl Cmc {
 
         match resp.status() {
             StatusCode::OK => {
-                let root = resp.json::<CmcIdMapFiat>()?;
+                let root = resp.json::<CmcFiatIdMap>()?;
                 Ok(root)
             }
             code => {
@@ -927,6 +928,7 @@ impl Cmc {
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
+    #[cfg(feature = "exchange")]
     pub fn exchange_metadata<T: Into<String>>(&self, exchange: T) -> CmcResult<ExchangeMetadata> {
         let exchange = exchange.into();
 
@@ -986,6 +988,7 @@ impl Cmc {
     ///     Err(err) => println!("{}", err),
     /// }
     /// ```
+    #[cfg(feature = "exchange")]
     pub fn exchange_id_map(
         &self,
         listing_status: ListingStatusExchange,
