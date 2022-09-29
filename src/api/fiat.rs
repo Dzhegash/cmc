@@ -1,3 +1,3 @@
-pub mod coinmarketcap_id_map;
+pub mod id_map;
 
-pub use crate::api::fiat::coinmarketcap_id_map::CmcIdMapFiat;
+pub use crate::api::fiat::id_map::CmcFiatIdMap;
