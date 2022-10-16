@@ -1,4 +1,3 @@
-use crate::api::global_metrics::quotes_latest::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::{ApiError, CmcErrors};
@@ -20,7 +19,11 @@ mod fiat;
 #[cfg(feature = "fiat")]
 use crate::api::fiat::*;
 
+#[cfg(feature = "global_metrics")]
 mod global_metrics;
+#[cfg(feature = "global_metrics")]
+use crate::api::global_metrics::*;
+
 mod key;
 mod tests;
 mod tools;
@@ -869,6 +872,7 @@ impl Cmc {
     /// }
     /// ```
     /// [convert()]: ./struct.CmcBuilder.html#method.convert
+    #[cfg(feature = "global_metrics")]
     pub fn global_metrics(&self) -> CmcResult<GlobalMetrics> {
         let rb = self.add_endpoint("v1/global-metrics/quotes/latest");
 
