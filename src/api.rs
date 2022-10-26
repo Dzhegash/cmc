@@ -1,4 +1,4 @@
-use crate::api::key::key_info::{CmcKeyInfo, KeyInfo};
+
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::{ApiError, CmcErrors};
 use reqwest::blocking::{Client, RequestBuilder};
@@ -24,9 +24,14 @@ mod global_metrics;
 #[cfg(feature = "global_metrics")]
 use crate::api::global_metrics::*;
 
+#[cfg(feature = "key")]
 mod key;
-mod tests;
+#[cfg(feature = "key")]
+use crate::api::key::*;
+
+
 mod tools;
+mod tests;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
@@ -515,6 +520,7 @@ impl Cmc {
     }
 
     /// Returns API key details and usage stats.
+    #[cfg(feature = "key")]
     pub fn key_info(&self) -> CmcResult<KeyInfo> {
         let resp = self.add_endpoint("v1/key/info").send()?;
         match resp.status() {
