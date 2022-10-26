@@ -5,13 +5,13 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PCv2Symbol {
     pub status: Status,
-    pub data: Vec<ConversionRequest>,
+    pub data: Vec<ConversionResult>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PCv2Id {
     pub status: Status,
-    pub data: ConversionRequest,
+    pub data: ConversionResult,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -25,7 +25,7 @@ pub struct Status {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ConversionRequest {
+pub struct ConversionResult {
     pub id: i64,
     pub symbol: String,
     pub name: String,
