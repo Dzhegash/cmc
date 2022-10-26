@@ -1,4 +1,3 @@
-
 use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::{ApiError, CmcErrors};
 use reqwest::blocking::{Client, RequestBuilder};
