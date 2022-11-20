@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod deserialize_tests {
-    use crate::api::cryptocurrency::quotes_latest_v2::*;
+    use cmc::api::cryptocurrency::quotes_latest_v2::*;
 
     #[test]
     fn deserialize_struct_id() {
@@ -52,7 +52,7 @@ mod deserialize_tests {
 
 #[cfg(test)]
 mod network_tests {
-    use crate::{Cmc, CmcBuilder, ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
+    use cmc::{Cmc, CmcBuilder, ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
     const APIKEY: &str = env!("CMC_API");
 
     #[test]

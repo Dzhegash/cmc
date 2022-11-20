@@ -3,36 +3,34 @@ use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
 
 #[cfg(feature = "cryptocurrency")]
-mod cryptocurrency;
+pub mod cryptocurrency;
 #[cfg(feature = "cryptocurrency")]
 use crate::api::cryptocurrency::*;
 
 #[cfg(feature = "exchange")]
-mod exchange;
+pub mod exchange;
 #[cfg(feature = "exchange")]
 use crate::api::exchange::*;
 
 #[cfg(feature = "fiat")]
-mod fiat;
+pub mod fiat;
 #[cfg(feature = "fiat")]
 use crate::api::fiat::*;
 
 #[cfg(feature = "global_metrics")]
-mod global_metrics;
+pub mod global_metrics;
 #[cfg(feature = "global_metrics")]
 use crate::api::global_metrics::*;
 
 #[cfg(feature = "key")]
-mod key;
+pub mod key;
 #[cfg(feature = "key")]
 use crate::api::key::*;
 
 #[cfg(feature = "tools")]
-mod tools;
+pub mod tools;
 #[cfg(feature = "tools")]
 use crate::api::tools::*;
-
-mod tests;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
 type CmcResult<T> = Result<T, CmcErrors>;
