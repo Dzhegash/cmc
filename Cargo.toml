@@ -12,12 +12,13 @@ repository = "https://github.com/dzhegash/cmc"
 readme = "README.md"
 
 [features]
-default = ["cryptocurrency", "exchange", "fiat", "global_metrics", "key"]
+default = ["cryptocurrency", "exchange", "fiat", "global_metrics", "key", "tools"]
 cryptocurrency = []
 exchange = []
 fiat = []
 global_metrics = []
 key = []
+tools = []
 
 [dependencies]
 serde = { version = "1.0.137", features = ["derive"] }

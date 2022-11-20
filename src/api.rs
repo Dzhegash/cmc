@@ -1,4 +1,3 @@
-use crate::api::tools::price_conversion_v2::{PCv2Id, PCv2Symbol};
 use crate::errors::{ApiError, CmcErrors};
 use reqwest::blocking::{Client, RequestBuilder};
 use reqwest::StatusCode;
@@ -28,8 +27,11 @@ mod key;
 #[cfg(feature = "key")]
 use crate::api::key::*;
 
-
+#[cfg(feature = "tools")]
 mod tools;
+#[cfg(feature = "tools")]
+use crate::api::tools::*;
+
 mod tests;
 
 const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
@@ -561,6 +563,7 @@ impl Cmc {
     ///     Err(err) => println!("Error: {}", err),
     /// }
     /// ```
+    #[cfg(feature = "tools")]
     pub fn price_conversion(
         &self,
         amount: f64,
@@ -626,6 +629,7 @@ impl Cmc {
     ///     Err(err) => println!("Error: {}", err),
     /// }
     /// ```
+    #[cfg(feature = "tools")]
     pub fn price_conversion_id(
         &self,
         amount: f64,
