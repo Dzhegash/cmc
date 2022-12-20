@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## 0.3.0 - 2022-12-20
+### Added
+ - Default features
+ - `fiat_id_map()`
+ - Documentation
+
+### Changed
+- Deprecated `id_map_fiat()`
+
 ## 0.2.4 - 2022-09-08
 ### Added
 - `SortExchange`
