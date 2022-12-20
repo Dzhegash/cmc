@@ -2,7 +2,7 @@
 //!
 //! The `cmc` is an unofficial library for [CoinMarketCap API][coinmarketcap]
 //!
-//! ## Get CoinMarketCap ID Map
+//! ## CoinMarketCap ID Map
 //! **NOTE**: `CoinMarketCap recommend utilizing CMC ID instead of cryptocurrency symbols to securely identify cryptocurrencies with other endpoints and in your own application logic.`
 //!```rust
 //! use cmc::{Cmc, Sort};
@@ -15,7 +15,7 @@
 //! }
 //!```
 //!
-//! ## Get price cryptocurrency
+//! ## Price cryptocurrency
 //!```rust
 //! use cmc::Cmc;
 //!
@@ -27,7 +27,7 @@
 //! }
 //!```
 //!
-//! ## Get price with custom settings
+//! ## Price with custom settings
 //!```rust
 //! use cmc::{CmcBuilder, Pass};
 //!
@@ -73,6 +73,22 @@
 //! }
 //!```
 //! [coinmarketcap]: https://coinmarketcap.com/api/
+//!
+//! ## Crate Features
+//! This crate supports default features:
+//!
+//! - `cryptocurrency`
+//! - `exchange`
+//! - `fiat`
+//! - `global_metrics`
+//! - `key`
+//! - `tools`
+//!
+//! ### Example:
+//! Disable all functions except the necessary ones
+//!```toml
+//! cmc = { version = "0.3.0", default-features = false, features = ["cryptocurrency"] }
+//!```
 
 pub mod api;
 pub mod errors;
