@@ -85,7 +85,7 @@ mod network_tests {
     fn net_key_info() {
         let cmc = Cmc::new(APIKEY);
         let key_info = cmc.key_info().unwrap();
-        assert!(key_info.plan.credit_limit_daily > 0);
+        assert!(key_info.plan.credit_limit_monthly > 0);
     }
 
     #[test]
