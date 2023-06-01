@@ -26,9 +26,6 @@ pub struct KeyInfo {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Plan {
-    pub credit_limit_daily: i64,
-    pub credit_limit_daily_reset: String,
-    pub credit_limit_daily_reset_timestamp: String,
     pub credit_limit_monthly: i64,
     pub credit_limit_monthly_reset: String,
     pub credit_limit_monthly_reset_timestamp: String,
@@ -51,7 +48,7 @@ pub struct CurrentMinute {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CurrentDay {
     pub credits_used: i64,
-    pub credits_left: i64,
+    pub credits_left: Option<i64>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -64,14 +61,11 @@ impl Display for KeyInfo {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Plan credit limits:\nDaily: {}\nDaily reset: {}\nMonthly: {}\nMonthly reset: {}\n\
-            Rate limit minute: {}\n----------------------\nCredits left:\nDay: {}\nMonth: {}",
-            self.plan.credit_limit_daily,
-            self.plan.credit_limit_daily_reset,
+            "Plan credit limits:\nMonthly: {}\nMonthly reset: {}\n\
+            Rate limit minute: {}\n----------------------\nCredits left this month: {}",
             self.plan.credit_limit_monthly,
             self.plan.credit_limit_monthly_reset,
             self.plan.rate_limit_minute,
-            self.usage.current_day.credits_left,
             self.usage.current_month.credits_left
         )
     }
