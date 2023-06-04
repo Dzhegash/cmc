@@ -155,11 +155,11 @@ mod network_tests {
     #[test]
     fn net_metadata_address() {
         let cmc = CmcBuilder::new(APIKEY).pass(Pass::Address).build();
-        let name = cmc
+        let id = cmc
             .metadata("0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e")
             .unwrap()
-            .name;
-        assert_eq!("Hokkaido Inu", name);
+            .id;
+        assert_eq!(9458, id);
     }
 
     #[test]
