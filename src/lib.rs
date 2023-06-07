@@ -92,5 +92,7 @@
 
 pub mod api;
 pub mod errors;
+pub mod async_api;
+
 #[doc(inline)]
 pub use self::api::{Cmc, CmcBuilder, ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
