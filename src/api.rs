@@ -69,7 +69,7 @@ pub enum ListingStatusExchange {
 }
 
 #[derive(Clone, Debug)]
-struct Config {
+pub(crate) struct Config {
     pass: Pass,
     currency: String,
     currency_id: Option<String>,
