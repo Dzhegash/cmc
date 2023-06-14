@@ -47,4 +47,21 @@ impl CmcBuilder {
         self.config.pass = pass;
         self
     }
+
+    /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat.
+    /// # Example:
+    /// ```rust
+    /// use cmc::CmcBuilder;
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>").convert("EUR").build();
+    ///
+    /// match cmc.price("ETH") {
+    ///     Ok(price) => println!("Price: {}", price), // In Euro
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
+    pub fn convert<T: Into<String>>(mut self, currency: T) -> CmcBuilder {
+        self.config.currency = currency.into().to_uppercase();
+        self
+    }
 }
