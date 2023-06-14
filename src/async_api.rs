@@ -9,6 +9,7 @@ pub struct CmcBuilder {
     client: Client,
     config: Config,
 }
+
 impl CmcBuilder {
     pub async fn new<T: Into<String>>(api_key: T) -> Self {
         let client = Client::builder().pool_idle_timeout(None).build().unwrap();
@@ -18,5 +19,32 @@ impl CmcBuilder {
             client,
             config: Config::default(),
         }
+    }
+
+    /// # Set pass:
+    ///
+    /// - **Id**: Cryptocurrency coinmarketcap id. Example: "1027"
+    ///
+    /// - **Slug**: Alternatively pass one cryptocurrency slug. Example: "ethereum"
+    ///
+    /// - **Symbol**: Alternatively pass one cryptocurrency symbol. Example: "BTC"
+    ///
+    /// **NOTE**: `CoinMarketCap recommend utilizing CMC ID instead of cryptocurrency symbols to securely identify cryptocurrencies with other endpoints and in your own application logic`
+    /// (Can be obtained using the method [id_map()][id]).
+    /// # Example:
+    /// ```rust
+    /// use cmc::{CmcBuilder, Pass};
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>").pass(Pass::Id).build();
+    ///
+    /// match cmc.price("1027") { // 1027 is Ethereum id.
+    ///     Ok(price) => println!("Price: {}", price),
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
+    /// [id]: ./struct.Cmc.html#method.id_map
+    pub fn pass(mut self, pass: Pass) -> CmcBuilder {
+        self.config.pass = pass;
+        self
     }
 }
