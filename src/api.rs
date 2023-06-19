@@ -147,6 +147,18 @@ impl CmcBuilder {
         self
     }
 
+    /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat.
+    /// # Example:
+    /// ```rust
+    /// use cmc::CmcBuilder;
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>").convert_id("1027").build();
+    ///
+    /// match cmc.price("BTC") {
+    ///     Ok(price) => println!("Price: {}", price), // In ETH
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
     pub fn convert_id<T: Into<String>>(mut self, currency_id: T) -> CmcBuilder {
         self.config.currency_id = Some(currency_id.into());
         self
