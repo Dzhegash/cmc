@@ -1,5 +1,6 @@
 use crate::api::Config;
 use crate::errors::{ApiError, CmcErrors};
+use crate::Pass;
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
 
@@ -62,6 +63,23 @@ impl CmcBuilder {
     /// ```
     pub fn convert<T: Into<String>>(mut self, currency: T) -> CmcBuilder {
         self.config.currency = currency.into().to_uppercase();
+        self
+    }
+
+    /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat.
+    /// # Example:
+    /// ```rust
+    /// use cmc::CmcBuilder;
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>").convert_id("1027").build();
+    ///
+    /// match cmc.price("BTC") {
+    ///     Ok(price) => println!("Price: {}", price), // In ETH
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
+    pub fn convert_id<T: Into<String>>(mut self, currency_id: T) -> CmcBuilder {
+        self.config.currency_id = Some(currency_id.into());
         self
     }
 }
