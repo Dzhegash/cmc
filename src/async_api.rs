@@ -91,4 +91,12 @@ impl CmcBuilder {
         self
     }
 
+    /// Returns a Cmc client that uses this CmcBuilder configuration.
+    pub fn build(self) -> Cmc {
+        Cmc {
+            api_key: self.api_key,
+            client: self.client,
+            config: self.config,
+        }
+    }
 }
