@@ -4,6 +4,14 @@ use crate::Pass;
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
 
+/// A `Cmc` can be used to create a CoinMarketCap client with default configuration.
+#[derive(Clone, Debug)]
+pub struct Cmc {
+    api_key: String,
+    client: Client,
+    config: Config,
+}
+
 /// A `CmcBuilder` can be used to create a `Cmc` with custom configuration.
 pub struct CmcBuilder {
     api_key: String,
@@ -82,4 +90,5 @@ impl CmcBuilder {
         self.config.currency_id = Some(currency_id.into());
         self
     }
+
 }
