@@ -4,13 +4,8 @@ use crate::Pass;
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
 
-/// A `Cmc` can be used to create a CoinMarketCap client with default configuration.
-#[derive(Clone, Debug)]
-pub struct Cmc {
-    api_key: String,
-    client: Client,
-    config: Config,
-}
+const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
+type CmcResult<T> = Result<T, CmcErrors>;
 
 /// A `CmcBuilder` can be used to create a `Cmc` with custom configuration.
 pub struct CmcBuilder {
@@ -20,7 +15,7 @@ pub struct CmcBuilder {
 }
 
 impl CmcBuilder {
-    pub async fn new<T: Into<String>>(api_key: T) -> Self {
+    pub fn new<T: Into<String>>(api_key: T) -> Self {
         let client = Client::builder().pool_idle_timeout(None).build().unwrap();
 
         Self {
@@ -98,5 +93,27 @@ impl CmcBuilder {
             client: self.client,
             config: self.config,
         }
+    }
+}
+
+/// A `Cmc` can be used to create a CoinMarketCap client with default configuration.
+#[derive(Clone, Debug)]
+pub struct Cmc {
+    api_key: String,
+    client: Client,
+    config: Config,
+}
+
+impl Cmc {
+    /// Constructs a new CoinMarketCap Client.
+    pub fn new<T: Into<String>>(api_key: T) -> Self {
+        CmcBuilder::new(api_key).build()
+    }
+
+    fn add_endpoint(&self, endpoint: &str) -> RequestBuilder {
+        self.client
+            .get(format!("{}{}", CMC_API_URL, endpoint))
+            .header("X-CMC_PRO_API_KEY", &self.api_key)
+            .header("Accepts", "application/json")
     }
 }
