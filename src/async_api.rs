@@ -1,6 +1,7 @@
+use crate::api::cryptocurrency::CmcIdMap;
 use crate::api::Config;
 use crate::errors::{ApiError, CmcErrors};
-use crate::Pass;
+use crate::{Pass, Sort};
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
 
@@ -115,5 +116,50 @@ impl Cmc {
             .get(format!("{}{}", CMC_API_URL, endpoint))
             .header("X-CMC_PRO_API_KEY", &self.api_key)
             .header("Accepts", "application/json")
+    }
+
+    /// Returns a mapping of all cryptocurrencies to unique CoinMarketCap ids.
+    ///
+    /// # Example:
+    ///
+    /// Parameters:
+    /// - `start` Offset the start.
+    /// - `limit` Specify the number of results to return.
+    /// - `sort` What field to sort the list of cryptocurrencies by.
+    ///
+    /// ```rust
+    /// use cmc::{Cmc, Sort};
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// match cmc.id_map(1, 50, Sort::CmcRank) {
+    ///     Ok(map) => println!("{}", map),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
+    #[cfg(feature = "cryptocurrency")]
+    pub async fn id_map(&self, start: usize, limit: usize, sort: Sort) -> CmcResult<CmcIdMap> {
+        let rb = self
+            .add_endpoint("v1/cryptocurrency/map")
+            .query(&[("start", start), ("limit", limit)]);
+
+        let resp = match sort {
+            Sort::Id => rb.query(&[("sort", "id")]).send().await?,
+            Sort::CmcRank => rb.query(&[("sort", "cmc_rank")]).send().await?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcIdMap>().await?;
+                Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
     }
 }
