@@ -1,7 +1,8 @@
 use crate::api::cryptocurrency::CmcIdMap;
+use crate::api::fiat::CmcFiatIdMap;
 use crate::api::Config;
 use crate::errors::{ApiError, CmcErrors};
-use crate::{Pass, Sort};
+use crate::{Pass, Sort, SortFiat};
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
 
@@ -151,6 +152,58 @@ impl Cmc {
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<CmcIdMap>().await?;
+                Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns a mapping of all supported fiat currencies to unique CoinMarketCap ids.
+    ///
+    /// # Example:
+    ///
+    /// Parameters:
+    /// - `start` Offset the start.
+    /// - `limit` Specify the number of results to return.
+    /// - `sort` What field to sort the list of currencies by.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::{Cmc, SortFiat};
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// match cmc.fiat_id_map(1, 100, SortFiat::Name) {
+    ///     Ok(map) => println!("{}", map),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
+    #[cfg(feature = "fiat")]
+    pub async fn fiat_id_map(
+        &self,
+        start: usize,
+        limit: usize,
+        sort: SortFiat,
+    ) -> CmcResult<CmcFiatIdMap> {
+        let rb = self
+            .add_endpoint("v1/fiat/map")
+            .query(&[("start", start), ("limit", limit)]);
+
+        let resp = match sort {
+            SortFiat::Id => rb.query(&[("sort", "id")]).send().await?,
+            SortFiat::Name => rb.query(&[("sort", "name")]).send().await?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcFiatIdMap>().await?;
                 Ok(root)
             }
             code => {
