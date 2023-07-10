@@ -1,4 +1,4 @@
-use crate::api::cryptocurrency::CmcIdMap;
+use crate::api::cryptocurrency::{CmcIdMap, QLv2Id};
 use crate::api::fiat::CmcFiatIdMap;
 use crate::api::Config;
 use crate::errors::{ApiError, CmcErrors};
@@ -205,6 +205,41 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<CmcFiatIdMap>().await?;
                 Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    #[cfg(feature = "cryptocurrency")]
+    async fn price_by_id(&self, id: &str, currency: &str) -> CmcResult<f64> {
+        let rb = self
+            .add_endpoint("v2/cryptocurrency/quotes/latest")
+            .query(&[("id", id)]);
+
+        let resp = if self.config.currency_id.is_some() {
+            rb.query(&[("convert_id", currency)]).send().await?
+        } else {
+            rb.query(&[("convert", currency)]).send().await?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<QLv2Id>().await?;
+                let price = root
+                    .data
+                    .get(id)
+                    .unwrap()
+                    .quote
+                    .get(currency)
+                    .unwrap()
+                    .price;
+                Ok(price)
             }
             code => {
                 let root = resp.json::<ApiError>().await?;
