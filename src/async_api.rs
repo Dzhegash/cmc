@@ -216,6 +216,41 @@ impl Cmc {
         }
     }
 
+    /// Latest price for cryptocurrency in USD.
+    ///
+    /// # Example:
+    ///
+    /// ```rust
+    /// use cmc::Cmc;
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// match cmc.price("BTC") {
+    ///     Ok(price) => println!("Price: {}", price),
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
+    #[cfg(feature = "cryptocurrency")]
+    pub async fn price<T: Into<String>>(&self, query: T) -> CmcResult<f64> {
+        let query = query.into();
+        if query.contains(',') {
+            return Err(CmcErrors::IncorrectQuery);
+        }
+
+        let currency = if let Some(currency_id) = &self.config.currency_id {
+            currency_id
+        } else {
+            &self.config.currency
+        };
+
+        match self.config.pass {
+            Pass::Symbol => Ok(self.price_by_symbol(&query, currency).await?),
+            Pass::Id => Ok(self.price_by_id(&query, currency).await?),
+            Pass::Slug => Ok(self.price_by_slug(&query, currency).await?),
+            Pass::Address => Err(CmcErrors::PassIncompatible),
+        }
+    }
+
     #[cfg(feature = "cryptocurrency")]
     async fn price_by_id(&self, id: &str, currency: &str) -> CmcResult<f64> {
         let rb = self
