@@ -351,4 +351,36 @@ impl Cmc {
             }
         }
     }
+
+    /// Returns the latest market quote for 1 or more cryptocurrencies (using id's).
+    #[cfg(feature = "cryptocurrency")]
+    pub async fn quotes_latest_by_id<T: Into<String>>(&self, ids: T) -> CmcResult<QLv2Id> {
+        let ids = ids.into();
+
+        let rb = self
+            .add_endpoint("v2/cryptocurrency/quotes/latest")
+            .query(&[("id", ids)]);
+
+        let resp = if let Some(currency_id) = &self.config.currency_id {
+            rb.query(&[("convert_id", currency_id)]).send().await?
+        } else {
+            rb.query(&[("convert", &self.config.currency)])
+                .send()
+                .await?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<QLv2Id>().await?;
+                Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
 }
