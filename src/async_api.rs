@@ -1,5 +1,6 @@
 use crate::api::cryptocurrency::{CmcIdMap, QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::CmcFiatIdMap;
+use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::Config;
 use crate::errors::{ApiError, CmcErrors};
 use crate::{Pass, Sort, SortFiat};
@@ -440,6 +441,25 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<QLv2Symbol>().await?;
                 Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns API key details and usage stats.
+    #[cfg(feature = "key")]
+    pub async fn key_info(&self) -> CmcResult<KeyInfo> {
+        let resp = self.add_endpoint("v1/key/info").send().await?;
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcKeyInfo>().await?;
+                Ok(root.data)
             }
             code => {
                 let root = resp.json::<ApiError>().await?;
