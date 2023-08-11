@@ -1,7 +1,7 @@
 use crate::api::cryptocurrency::{CmcIdMap, QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::CmcFiatIdMap;
 use crate::api::key::{CmcKeyInfo, KeyInfo};
-use crate::api::tools::PCv2Symbol;
+use crate::api::tools::{PCv2Id, PCv2Symbol};
 use crate::api::Config;
 use crate::errors::{ApiError, CmcErrors};
 use crate::{Pass, Sort, SortFiat};
@@ -520,6 +520,73 @@ impl Cmc {
                 let price = root.data[0]
                     .quote
                     .get(&convert.to_uppercase())
+                    .unwrap()
+                    .price;
+                if let Some(price) = price {
+                    Ok(price)
+                } else {
+                    Err(CmcErrors::NullAnswer)
+                }
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Convert an amount of one cryptocurrency or fiat currency into one or more different currencies
+    /// utilizing the latest market rate for each currency.
+    ///
+    /// # Example:
+    ///
+    /// Parameters:
+    /// - `amount` An amount of currency to convert.
+    /// - `id` The CoinMarketCap currency ID of the base cryptocurrency or fiat to convert from.
+    /// - `time` Optional timestamp (Unix or ISO 8601) to reference historical pricing during conversion. If not passed, the current time will be used.
+    /// - `convert_id` Optionally calculate market quotes by CoinMarketCap ID instead of symbol. This option is identical to convert outside of ID format.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::Cmc;
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// // 1.6 ETH in Monero (XMR).
+    /// match cmc.price_conversion_id(1.6, "1027", None, "328") {
+    ///     Ok(price) => println!("Total price: {}", price),
+    ///     Err(err) => println!("Error: {}", err),
+    /// }
+    /// ```
+    #[cfg(feature = "tools")]
+    pub async fn price_conversion_id(
+        &self,
+        amount: f64,
+        id: &str,
+        time: Option<&str>,
+        convert_id: &str,
+    ) -> CmcResult<f64> {
+        let rb = self
+            .add_endpoint("v2/tools/price-conversion")
+            .query(&[("amount", amount)])
+            .query(&[("id", id), ("convert_id", convert_id)]);
+
+        let resp = match time {
+            Some(t) => rb.query(&[("time", t)]).send().await?,
+            None => rb.send().await?,
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<PCv2Id>().await?;
+                let price = root
+                    .data
+                    .quote
+                    .get(&convert_id.to_uppercase())
                     .unwrap()
                     .price;
                 if let Some(price) = price {
