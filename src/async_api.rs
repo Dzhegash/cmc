@@ -1,4 +1,4 @@
-use crate::api::cryptocurrency::{CmcIdMap, QLv2Id, QLv2Slug, QLv2Symbol};
+use crate::api::cryptocurrency::{CmcCategories, CmcIdMap, QLv2Id, QLv2Slug, QLv2Symbol};
 use crate::api::fiat::CmcFiatIdMap;
 use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::{PCv2Id, PCv2Symbol};
@@ -594,6 +594,63 @@ impl Cmc {
                 } else {
                     Err(CmcErrors::NullAnswer)
                 }
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns information about all coin categories available on CoinMarketCap.
+    ///
+    /// # Example:
+    ///
+    /// Parameters:
+    /// - `start` Optionally offset the start (1-based index) of the paginated list of items to return.
+    /// - `limit` Optionally specify the number of results to return. Use this parameter and the "start" parameter to determine your own pagination size.
+    /// - `pass` Cryptocurrency pass (id, slug, symbol)
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::{CmcBuilder, Pass};
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Id)
+    ///     .build();
+    ///
+    /// match cmc.categories(1, 10, "1027") {
+    ///     Ok(categories) => println!("{categories}"),
+    ///     Err(err) => println!("{err}"),
+    /// }
+    /// ```
+    #[cfg(feature = "cryptocurrency")]
+    pub async fn categories<T: Into<String>>(
+        &self,
+        start: usize,
+        limit: usize,
+        pass: T,
+    ) -> CmcResult<CmcCategories> {
+        let query = pass.into();
+        let rb = self
+            .add_endpoint("v1/cryptocurrency/categories")
+            .query(&[("start", start), ("limit", limit)]);
+
+        let resp = match self.config.pass {
+            Pass::Symbol => rb.query(&[("symbol", query)]).send().await?,
+            Pass::Id => rb.query(&[("id", query)]).send().await?,
+            Pass::Slug => rb.query(&[("slug", query)]).send().await?,
+            Pass::Address => return Err(CmcErrors::PassIncompatible),
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcCategories>().await?;
+                Ok(root)
             }
             code => {
                 let root = resp.json::<ApiError>().await?;
