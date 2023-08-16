@@ -1,4 +1,6 @@
-use crate::api::cryptocurrency::{CmcCategories, CmcIdMap, QLv2Id, QLv2Slug, QLv2Symbol};
+use crate::api::cryptocurrency::{
+    Category, CmcCategories, CmcCategory, CmcIdMap, QLv2Id, QLv2Slug, QLv2Symbol,
+};
 use crate::api::fiat::CmcFiatIdMap;
 use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::{PCv2Id, PCv2Symbol};
@@ -651,6 +653,60 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<CmcCategories>().await?;
                 Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns information about a single coin category available on CoinMarketCap.
+    ///
+    /// # Example:
+    ///
+    /// Parameters:
+    /// - `id` The Category ID. This can be found using the [categories()].
+    /// - `start` Optionally offset the start (1-based index) of the paginated list of coins to return.
+    /// - `limit` Optionally specify the number of coins to return. Use this parameter and the "start" parameter to determine your own pagination size.
+    ///
+    /// Basic usage:
+    ///
+    /// ```rust
+    /// use cmc::CmcBuilder;
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .convert("EUR")
+    ///     .build();
+    ///
+    /// match cmc.category("605e2ce9d41eae1066535f7c", 1, 10) {
+    ///     Ok(category) => println!("{category}"),
+    ///     Err(err) => println!("{err}"),
+    /// }
+    /// ```
+    /// [categories()]: ./struct.Cmc.html#method.categories
+    #[cfg(feature = "cryptocurrency")]
+    pub async fn category(&self, id: &str, start: usize, limit: usize) -> CmcResult<Category> {
+        let rb = self
+            .add_endpoint("v1/cryptocurrency/category")
+            .query(&[("id", id)])
+            .query(&[("start", start), ("limit", limit)]);
+
+        let resp = if let Some(currency_id) = &self.config.currency_id {
+            rb.query(&[("convert_id", currency_id)]).send().await?
+        } else {
+            rb.query(&[("convert", &self.config.currency)])
+                .send()
+                .await?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcCategory>().await?;
+                Ok(root.data)
             }
             code => {
                 let root = resp.json::<ApiError>().await?;
