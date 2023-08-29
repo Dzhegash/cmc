@@ -2,14 +2,14 @@ use crate::api::cryptocurrency::{
     Category, CmcCategories, CmcCategory, CmcIdMap, MDv2, MDv2Symbol, Metadata, QLv2Id, QLv2Slug,
     QLv2Symbol,
 };
-use crate::api::exchange::ExchangeMetadata;
+use crate::api::exchange::{CmcExchangeIdMap, ExchangeMetadata};
 use crate::api::fiat::CmcFiatIdMap;
 use crate::api::global_metrics::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::{PCv2Id, PCv2Symbol};
 use crate::api::Config;
 use crate::errors::{ApiError, CmcErrors};
-use crate::{Pass, Sort, SortFiat};
+use crate::{ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
 
@@ -906,6 +906,83 @@ impl Cmc {
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<ExchangeMetadata>().await?;
+                Ok(root)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns a paginated list of all active cryptocurrency exchanges by CoinMarketCap ID.
+    ///
+    /// # Examples:
+    ///
+    /// Parameters:
+    ///
+    /// - `listing_status`:
+    ///
+    ///  **Active**: Only active exchanges are returned.
+    ///
+    ///  **Inactive**: List of exchanges that are no longer active.
+    ///
+    ///  **Untracked**: List of exchanges that are registered but do not currently meet methodology requirements to have active markets tracked.
+    ///
+    /// - `start`: Optionally offset the start (1-based index) of the paginated list of items to return.
+    ///
+    /// - `limit`: Optionally specify the number of results to return. Use this parameter and the "start" parameter to determine your own pagination size.
+    ///
+    /// - `sort`: What field to sort the list of exchanges by.
+    ///
+    /// - `crypto_id`: Optionally include one fiat or cryptocurrency IDs to filter market pairs by.
+    ///
+    /// ```rust
+    /// use cmc::{Cmc, ListingStatusExchange, SortExchange};
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// match cmc.exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id, None) {
+    ///     Ok(map) => println!("{}", map),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
+    #[cfg(feature = "exchange")]
+    pub async fn exchange_id_map(
+        &self,
+        listing_status: ListingStatusExchange,
+        start: usize,
+        limit: usize,
+        sort: SortExchange,
+        crypto_id: Option<&str>,
+    ) -> CmcResult<CmcExchangeIdMap> {
+        let rb = self
+            .add_endpoint("v1/exchange/map")
+            .query(&[("start", start), ("limit", limit)]);
+
+        let rb = match listing_status {
+            ListingStatusExchange::Active => rb.query(&[("listing_status", "active")]),
+            ListingStatusExchange::Inactive => rb.query(&[("listing_status", "inactive")]),
+            ListingStatusExchange::Untracked => rb.query(&[("listing_status", "untracked")]),
+        };
+
+        let rb = match sort {
+            SortExchange::Id => rb.query(&[("sort", "id")]),
+            SortExchange::Volume24h => rb.query(&[("sort", "volume_24h")]),
+        };
+
+        let resp = if let Some(id) = crypto_id {
+            rb.query(&[("crypto_id", id)]).send().await?
+        } else {
+            rb.send().await?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcExchangeIdMap>().await?;
                 Ok(root)
             }
             code => {
