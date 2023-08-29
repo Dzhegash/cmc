@@ -3,6 +3,7 @@ use crate::api::cryptocurrency::{
     QLv2Symbol,
 };
 use crate::api::fiat::CmcFiatIdMap;
+use crate::api::global_metrics::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::{PCv2Id, PCv2Symbol};
 use crate::api::Config;
@@ -793,6 +794,49 @@ impl Cmc {
                     Ok(md)
                 }
             },
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns the latest global cryptocurrency market metrics. Use the [convert()] to return
+    /// market values in multiple fiat and cryptocurrency conversions in the same call.
+    ///
+    /// ```rust
+    /// use cmc::CmcBuilder;
+    ///
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .convert("EUR")
+    ///     .build();
+    ///
+    /// match cmc.global_metrics() {
+    ///     Ok(gm) => println!("{}", gm.btc_dominance),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
+    /// [convert()]: ./struct.CmcBuilder.html#method.convert
+    #[cfg(feature = "global_metrics")]
+    pub async fn global_metrics(&self) -> CmcResult<GlobalMetrics> {
+        let rb = self.add_endpoint("v1/global-metrics/quotes/latest");
+
+        let resp = if let Some(currency_id) = &self.config.currency_id {
+            rb.query(&[("convert_id", currency_id)]).send().await?
+        } else {
+            rb.query(&[("convert", &self.config.currency)])
+                .send()
+                .await?
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<CmcGlobalMetrics>().await?;
+                Ok(root.data)
+            }
             code => {
                 let root = resp.json::<ApiError>().await?;
                 Err(CmcErrors::ApiError(format!(
