@@ -2,6 +2,7 @@ use crate::api::cryptocurrency::{
     Category, CmcCategories, CmcCategory, CmcIdMap, MDv2, MDv2Symbol, Metadata, QLv2Id, QLv2Slug,
     QLv2Symbol,
 };
+use crate::api::exchange::ExchangeMetadata;
 use crate::api::fiat::CmcFiatIdMap;
 use crate::api::global_metrics::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::{CmcKeyInfo, KeyInfo};
@@ -836,6 +837,76 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<CmcGlobalMetrics>().await?;
                 Ok(root.data)
+            }
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns all static metadata for one or more exchanges. This information includes details
+    /// like launch date, logo, official website URL, social links, and market fee documentation URL.
+    ///
+    /// # Examples:
+    ///
+    /// Parameters:
+    ///
+    /// - **Id**: One or more comma-separated CoinMarketCap cryptocurrency exchange ids. Example: "270,271"
+    ///
+    /// - **Slug**: Alternatively, one or more comma-separated exchange names in URL friendly
+    ///   shorthand "slug" format (all lowercase, spaces replaced with hyphens). Example: "binance,gdax".
+    ///
+    /// ```rust
+    /// use cmc::{CmcBuilder, Pass};
+    ///
+    /// // using Id
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Id)
+    ///     .build();
+    ///
+    /// match cmc.exchange_metadata("270") {
+    ///     Ok(metadata) => println!("{}", metadata.data.get("270").unwrap().name),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    ///
+    /// // using Slug
+    /// let cmc = CmcBuilder::new("<API KEY>")
+    ///     .pass(Pass::Slug)
+    ///     .build();
+    ///
+    /// match cmc.exchange_metadata("binance") {
+    ///     Ok(metadata) => println!("{}", metadata.data.get("binance").unwrap().name),
+    ///     Err(err) => println!("{}", err),
+    /// }
+    /// ```
+    #[cfg(feature = "exchange")]
+    pub async fn exchange_metadata<T: Into<String>>(
+        &self,
+        exchange: T,
+    ) -> CmcResult<ExchangeMetadata> {
+        let exchange = exchange.into();
+
+        let rb = self.add_endpoint("v1/exchange/info");
+
+        let resp = match self.config.pass {
+            Pass::Symbol => return Err(CmcErrors::PassIncompatible),
+            Pass::Id => rb.query(&[("id", &exchange)]).send().await?,
+            Pass::Slug => {
+                rb.query(&[("slug", &exchange.to_lowercase())])
+                    .send()
+                    .await?
+            }
+            Pass::Address => return Err(CmcErrors::PassIncompatible),
+        };
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<ExchangeMetadata>().await?;
+                Ok(root)
             }
             code => {
                 let root = resp.json::<ApiError>().await?;
