@@ -156,10 +156,11 @@ mod network_tests {
     fn net_metadata_address() {
         let cmc = CmcBuilder::new(APIKEY).pass(Pass::Address).build();
         let id = cmc
-            .metadata("0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e")
+            // contract address
+            .metadata("0xdAC17F958D2ee523a2206206994597C13D831ec7")
             .unwrap()
             .id;
-        assert_eq!(9458, id);
+        assert_eq!(825, id);
     }
 
     #[test]
