@@ -9,7 +9,7 @@ use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::{PCv2Id, PCv2Symbol};
 use crate::api::{CmcResult, Config, CMC_API_URL};
 use crate::errors::{ApiError, CmcErrors};
-use crate::{ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
+pub use crate::{ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
 
@@ -43,11 +43,11 @@ impl CmcBuilder {
     /// (Can be obtained using the method [id_map()][id]).
     /// # Example:
     /// ```rust
-    /// use cmc::{CmcBuilder, Pass};
+    /// use cmc::async_api::{CmcBuilder, Pass};
     ///
     /// let cmc = CmcBuilder::new("<API KEY>").pass(Pass::Id).build();
     ///
-    /// match cmc.price("1027") { // 1027 is Ethereum id.
+    /// match cmc.price("1027").await { // 1027 is Ethereum id.
     ///     Ok(price) => println!("Price: {}", price),
     ///     Err(err) => println!("Error: {}", err),
     /// }
@@ -61,11 +61,11 @@ impl CmcBuilder {
     /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat.
     /// # Example:
     /// ```rust
-    /// use cmc::CmcBuilder;
+    /// use cmc::async_api::CmcBuilder;
     ///
     /// let cmc = CmcBuilder::new("<API KEY>").convert("EUR").build();
     ///
-    /// match cmc.price("ETH") {
+    /// match cmc.price("ETH").await {
     ///     Ok(price) => println!("Price: {}", price), // In Euro
     ///     Err(err) => println!("Error: {}", err),
     /// }
@@ -78,11 +78,11 @@ impl CmcBuilder {
     /// Optionally calculate market quotes in up to 120 currencies by passing cryptocurrency or fiat.
     /// # Example:
     /// ```rust
-    /// use cmc::CmcBuilder;
+    /// use cmc::async_api::CmcBuilder;
     ///
     /// let cmc = CmcBuilder::new("<API KEY>").convert_id("1027").build();
     ///
-    /// match cmc.price("BTC") {
+    /// match cmc.price("BTC").await {
     ///     Ok(price) => println!("Price: {}", price), // In ETH
     ///     Err(err) => println!("Error: {}", err),
     /// }
@@ -92,7 +92,7 @@ impl CmcBuilder {
         self
     }
 
-    /// Returns a Cmc client that uses this CmcBuilder configuration.
+    /// Returns a Cmc async client that uses this CmcBuilder configuration.
     pub fn build(self) -> Cmc {
         Cmc {
             api_key: self.api_key,
@@ -111,7 +111,7 @@ pub struct Cmc {
 }
 
 impl Cmc {
-    /// Constructs a new CoinMarketCap Client.
+    /// Constructs a new CoinMarketCap async Client.
     pub fn new<T: Into<String>>(api_key: T) -> Self {
         CmcBuilder::new(api_key).build()
     }
@@ -133,11 +133,11 @@ impl Cmc {
     /// - `sort` What field to sort the list of cryptocurrencies by.
     ///
     /// ```rust
-    /// use cmc::{Cmc, Sort};
+    /// use cmc::async_api::{Cmc, Sort};
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
-    /// match cmc.id_map(1, 50, Sort::CmcRank) {
+    /// match cmc.id_map(1, 50, Sort::CmcRank).await {
     ///     Ok(map) => println!("{}", map),
     ///     Err(err) => println!("{}", err),
     /// }
@@ -180,11 +180,11 @@ impl Cmc {
     /// Basic usage:
     ///
     /// ```rust
-    /// use cmc::{Cmc, SortFiat};
+    /// use cmc::async_api::{Cmc, SortFiat};
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
-    /// match cmc.fiat_id_map(1, 100, SortFiat::Name) {
+    /// match cmc.fiat_id_map(1, 100, SortFiat::Name).await {
     ///     Ok(map) => println!("{}", map),
     ///     Err(err) => println!("{}", err),
     /// }
@@ -225,11 +225,11 @@ impl Cmc {
     /// # Example:
     ///
     /// ```rust
-    /// use cmc::Cmc;
+    /// use cmc::async_api::Cmc;
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
-    /// match cmc.price("BTC") {
+    /// match cmc.price("BTC").await {
     ///     Ok(price) => println!("Price: {}", price),
     ///     Err(err) => println!("Error: {}", err),
     /// }
@@ -488,12 +488,12 @@ impl Cmc {
     /// Basic usage:
     ///
     /// ```rust
-    /// use cmc::Cmc;
+    /// use cmc::async_api::Cmc;
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
     /// // 2.5 BTC in EUR
-    /// match cmc.price_conversion(2.5, "BTC", None, "EUR") {
+    /// match cmc.price_conversion(2.5, "BTC", None, "EUR").await {
     ///     Ok(price) => println!("Total price: {}", price),
     ///     Err(err) => println!("Error: {}", err),
     /// }
@@ -554,12 +554,12 @@ impl Cmc {
     /// Basic usage:
     ///
     /// ```rust
-    /// use cmc::Cmc;
+    /// use cmc::async_api::Cmc;
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
     /// // 1.6 ETH in Monero (XMR).
-    /// match cmc.price_conversion_id(1.6, "1027", None, "328") {
+    /// match cmc.price_conversion_id(1.6, "1027", None, "328").await {
     ///     Ok(price) => println!("Total price: {}", price),
     ///     Err(err) => println!("Error: {}", err),
     /// }
@@ -619,13 +619,13 @@ impl Cmc {
     /// Basic usage:
     ///
     /// ```rust
-    /// use cmc::{CmcBuilder, Pass};
+    /// use cmc::async_api::{CmcBuilder, Pass};
     ///
     /// let cmc = CmcBuilder::new("<API KEY>")
     ///     .pass(Pass::Id)
     ///     .build();
     ///
-    /// match cmc.categories(1, 10, "1027") {
+    /// match cmc.categories(1, 10, "1027").await {
     ///     Ok(categories) => println!("{categories}"),
     ///     Err(err) => println!("{err}"),
     /// }
@@ -676,13 +676,13 @@ impl Cmc {
     /// Basic usage:
     ///
     /// ```rust
-    /// use cmc::CmcBuilder;
+    /// use cmc::async_api::CmcBuilder;
     ///
     /// let cmc = CmcBuilder::new("<API KEY>")
     ///     .convert("EUR")
     ///     .build();
     ///
-    /// match cmc.category("605e2ce9d41eae1066535f7c", 1, 10) {
+    /// match cmc.category("605e2ce9d41eae1066535f7c", 1, 10).await {
     ///     Ok(category) => println!("{category}"),
     ///     Err(err) => println!("{err}"),
     /// }
@@ -735,13 +735,13 @@ impl Cmc {
     /// **NOTE**: `CoinMarketCap recommend utilizing CMC ID instead of cryptocurrency symbols to securely identify cryptocurrencies with other endpoints and in your own application logic`
     /// (Can be obtained using the method [id_map()][id]).
     /// ```rust
-    /// use cmc::{CmcBuilder, Pass};
+    /// use cmc::async_api::{CmcBuilder, Pass};
     ///
     /// let cmc = CmcBuilder::new("<API KEY>")
     ///     .pass(Pass::Id)
     ///     .build();
     /// // Cryptocurrency metadata.
-    /// match cmc.metadata("1027") {
+    /// match cmc.metadata("1027").await {
     ///     Ok(metadata) => println!("{}", metadata.description),
     ///     Err(err) => println!("{}", err),
     /// }
@@ -750,7 +750,7 @@ impl Cmc {
     ///     .pass(Pass::Address)
     ///     .build();
     /// // Contract address metadata.
-    /// match cmc.metadata("0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e") {
+    /// match cmc.metadata("0xc40af1e4fecfa05ce6bab79dcd8b373d2e436c4e").await {
     ///     Ok(metadata) => println!("{}", metadata.description),
     ///     Err(err) => println!("{}", err),
     /// }
@@ -806,13 +806,13 @@ impl Cmc {
     /// market values in multiple fiat and cryptocurrency conversions in the same call.
     ///
     /// ```rust
-    /// use cmc::CmcBuilder;
+    /// use cmc::async_api::CmcBuilder;
     ///
     /// let cmc = CmcBuilder::new("<API KEY>")
     ///     .convert("EUR")
     ///     .build();
     ///
-    /// match cmc.global_metrics() {
+    /// match cmc.global_metrics().await {
     ///     Ok(gm) => println!("{}", gm.btc_dominance),
     ///     Err(err) => println!("{}", err),
     /// }
@@ -858,14 +858,14 @@ impl Cmc {
     ///   shorthand "slug" format (all lowercase, spaces replaced with hyphens). Example: "binance,gdax".
     ///
     /// ```rust
-    /// use cmc::{CmcBuilder, Pass};
+    /// use cmc::async_api::{CmcBuilder, Pass};
     ///
     /// // using Id
     /// let cmc = CmcBuilder::new("<API KEY>")
     ///     .pass(Pass::Id)
     ///     .build();
     ///
-    /// match cmc.exchange_metadata("270") {
+    /// match cmc.exchange_metadata("270").await {
     ///     Ok(metadata) => println!("{}", metadata.data.get("270").unwrap().name),
     ///     Err(err) => println!("{}", err),
     /// }
@@ -875,7 +875,7 @@ impl Cmc {
     ///     .pass(Pass::Slug)
     ///     .build();
     ///
-    /// match cmc.exchange_metadata("binance") {
+    /// match cmc.exchange_metadata("binance").await {
     ///     Ok(metadata) => println!("{}", metadata.data.get("binance").unwrap().name),
     ///     Err(err) => println!("{}", err),
     /// }
@@ -938,11 +938,11 @@ impl Cmc {
     /// - `crypto_id`: Optionally include one fiat or cryptocurrency IDs to filter market pairs by.
     ///
     /// ```rust
-    /// use cmc::{Cmc, ListingStatusExchange, SortExchange};
+    /// use cmc::async_api::{Cmc, ListingStatusExchange, SortExchange};
     ///
     /// let cmc = Cmc::new("<API KEY>");
     ///
-    /// match cmc.exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id, None) {
+    /// match cmc.exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id, None).await {
     ///     Ok(map) => println!("{}", map),
     ///     Err(err) => println!("{}", err),
     /// }
