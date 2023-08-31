@@ -7,14 +7,11 @@ use crate::api::fiat::CmcFiatIdMap;
 use crate::api::global_metrics::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::{PCv2Id, PCv2Symbol};
-use crate::api::Config;
+use crate::api::{CmcResult, Config, CMC_API_URL};
 use crate::errors::{ApiError, CmcErrors};
 use crate::{ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
-
-const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
-type CmcResult<T> = Result<T, CmcErrors>;
 
 /// A `CmcBuilder` can be used to create a `Cmc` with custom configuration.
 pub struct CmcBuilder {

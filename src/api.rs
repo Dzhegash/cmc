@@ -32,8 +32,8 @@ pub mod tools;
 #[cfg(feature = "tools")]
 use crate::api::tools::*;
 
-const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
-type CmcResult<T> = Result<T, CmcErrors>;
+pub(crate) const CMC_API_URL: &str = "https://pro-api.coinmarketcap.com/";
+pub(crate) type CmcResult<T> = Result<T, CmcErrors>;
 
 #[derive(Clone, Debug)]
 pub enum Pass {
