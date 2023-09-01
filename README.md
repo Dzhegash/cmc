@@ -88,8 +88,41 @@ match cmc.exchange_id_map(ListingStatusExchange::Active, 1, 10, SortExchange::Id
 }
 ```
 ___
+## Crate Features
+This crate supports default features:
+- `cryptocurrency`
+- `exchange`
+- `fiat`
+- `global_metrics`
+- `key`
+- `tools`
 
-##### See the documentation for the rest.
+
+Disable all functions except the necessary ones:
+```toml
+[dependencies]
+cmc = { version = "0.4.0", default-features = false, features = ["cryptocurrency"] }
+```
+## Async
+Asynchronous versions of functions are available through enabling the async feature:
+```toml
+[dependencies]
+cmc = { version = "0.4.0", features = ["async"] }
+```
+And then the code:
+```rust
+#[tokio::main]
+async fn main() {
+    use cmc::async_api::Cmc;
+    
+    let cmc = Cmc::new("<API KEY>");
+    
+    match cmc.price("BTC").await {
+        Ok(price) => println!("Price: {}", price),
+        Err(err) => println!("Error: {}", err),
+    }
+}
+```
 ___
 
 
