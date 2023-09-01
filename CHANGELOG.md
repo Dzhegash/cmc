@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+
+### 0.4.0 - 2023-09-01
+### Added
+- Async implementation (feature `async`)
+- Minor fixes
+- Documentation
+
 ## 0.3.0 - 2022-12-20
 ### Added
  - Default features
