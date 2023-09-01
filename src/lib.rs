@@ -84,15 +84,36 @@
 //! - `key`
 //! - `tools`
 //!
-//! ### Example:
-//! Disable all functions except the necessary ones
+//! Disable all functions except the necessary ones:
 //!```toml
-//! cmc = { version = "0.3.0", default-features = false, features = ["cryptocurrency"] }
+//! [dependencies]
+//! cmc = { version = "0.4.0", default-features = false, features = ["cryptocurrency"] }
 //!```
+//! ## Async
+//! Asynchronous versions of functions are available through enabling the async feature:
+//! ```toml
+//! [dependencies]
+//! cmc = { version = "0.4.0", features = ["async"] }
+//! ```
+//! And then the code:
+//! ```rust
+//! #[tokio::main]
+//! async fn main() {
+//!     use cmc::async_api::Cmc;
+//!
+//!     let cmc = Cmc::new("<API KEY>");
+//!
+//!     match cmc.price("BTC").await {
+//!         Ok(price) => println!("Price: {}", price),
+//!         Err(err) => println!("Error: {}", err),
+//!     }
+//! }
+//! ```
 
 pub mod api;
-pub mod errors;
+#[cfg(any(feature = "async", doc))]
 pub mod async_api;
+pub mod errors;
 
 #[doc(inline)]
 pub use self::api::{Cmc, CmcBuilder, ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
