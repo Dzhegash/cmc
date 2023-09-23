@@ -92,6 +92,12 @@ impl CmcBuilder {
         self
     }
 
+    /// Optionally set the coinmarketcap base url.
+    pub fn base_url(mut self, base_url: String) -> CmcBuilder {
+        self.config.base_url = base_url;
+        self
+    }
+
     /// Returns a Cmc async client that uses this CmcBuilder configuration.
     pub fn build(self) -> Cmc {
         Cmc {
@@ -118,7 +124,7 @@ impl Cmc {
 
     fn add_endpoint(&self, endpoint: &str) -> RequestBuilder {
         self.client
-            .get(format!("{}{}", CMC_API_URL, endpoint))
+            .get(format!("{}{}", self.config.base_url, endpoint))
             .header("X-CMC_PRO_API_KEY", &self.api_key)
             .header("Accepts", "application/json")
     }
