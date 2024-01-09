@@ -841,9 +841,7 @@ impl Cmc {
     pub fn metadata<T: Into<String>>(&self, query: T) -> CmcResult<Metadata> {
         let query = query.into();
 
-        if query.contains(',') {
-            return Err(CmcErrors::IncorrectQuery);
-        }
+   
 
         let rb = self.add_endpoint("v2/cryptocurrency/info");
 
