@@ -7,7 +7,7 @@ use crate::api::fiat::CmcFiatIdMap;
 use crate::api::global_metrics::{CmcGlobalMetrics, GlobalMetrics};
 use crate::api::key::{CmcKeyInfo, KeyInfo};
 use crate::api::tools::{PCv2Id, PCv2Symbol};
-use crate::api::{CmcResult, Config, CMC_API_URL};
+use crate::api::{CmcResult, Config};
 use crate::errors::{ApiError, CmcErrors};
 pub use crate::{ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
 use reqwest::StatusCode;
@@ -93,8 +93,8 @@ impl CmcBuilder {
     }
 
     /// Optionally set the coinmarketcap base url.
-    pub fn base_url(mut self, base_url: String) -> CmcBuilder {
-        self.config.base_url = base_url;
+    pub fn base_url<T: Into<String>>(mut self, base_url: T) -> CmcBuilder {
+        self.config.base_url = base_url.into();
         self
     }
 

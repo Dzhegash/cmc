@@ -82,7 +82,7 @@ impl Default for Config {
             pass: Pass::Symbol,
             currency: "USD".into(),
             currency_id: None,
-            base_url: CMC_API_URL.to_string(),
+            base_url: CMC_API_URL.into(),
         }
     }
 }
@@ -167,8 +167,8 @@ impl CmcBuilder {
     }
 
     /// Optionally set the coinmarketcap base url.
-    pub fn base_url(mut self, base_url: String) -> CmcBuilder {
-        self.config.base_url = base_url;
+    pub fn base_url<T: Into<String>>(mut self, base_url: T) -> CmcBuilder {
+        self.config.base_url = base_url.into();
         self
     }
 
