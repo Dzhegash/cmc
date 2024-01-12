@@ -164,6 +164,16 @@ mod network_tests {
     }
 
     #[test]
+    fn net_metadata_map() {
+        let cmc = Cmc::new(APIKEY);
+        let q = "1,328,1027";
+        let map = cmc.metadata_map(q).unwrap();
+        assert_eq!("Bitcoin", map.get("1").unwrap().name);
+        assert_eq!("Monero", map.get("328").unwrap().name);
+        assert_eq!("Ethereum", map.get("1027").unwrap().name);
+    }
+
+    #[test]
     fn net_global_metrics_convert() {
         let cmc = CmcBuilder::new(APIKEY).convert("ETH").build();
 
