@@ -12,6 +12,7 @@ use crate::errors::{ApiError, CmcErrors};
 pub use crate::{ListingStatusExchange, Pass, Sort, SortExchange, SortFiat};
 use reqwest::StatusCode;
 use reqwest::{Client, RequestBuilder};
+use std::collections::HashMap;
 
 /// A `CmcBuilder` can be used to create a `Cmc` with custom configuration.
 pub struct CmcBuilder {
@@ -798,6 +799,51 @@ impl Cmc {
                     Ok(md)
                 }
             },
+            code => {
+                let root = resp.json::<ApiError>().await?;
+                Err(CmcErrors::ApiError(format!(
+                    "Status Code: {}. Error message: {}",
+                    code, root.status.error_message
+                )))
+            }
+        }
+    }
+
+    /// Returns HashMap with all static metadata available for one or more cryptocurrencies.
+    /// This information includes details like logo, description, official website URL, social links,
+    /// and links to a cryptocurrency's technical documentation.
+    /// # Examples:
+    ///
+    /// Parameters:
+    ///
+    /// - **query**: One or more comma-separated CoinMarketCap cryptocurrency exchange ids. Example: "1,328,1027"
+    /// ```rust
+    /// use cmc::async_api::Cmc;
+    ///
+    /// let cmc = Cmc::new("<API KEY>");
+    ///
+    /// let query = "1,328,1027";
+    /// let map = cmc.metadata_map(query).await?;
+    ///
+    /// for m in map.values() {
+    ///     println!("{}", m.name);
+    /// }
+    /// ```
+    #[cfg(feature = "cryptocurrency")]
+    pub async fn metadata_map<T: Into<String>>(
+        &self,
+        query: T,
+    ) -> CmcResult<HashMap<String, Metadata>> {
+        let query = query.into();
+        let rb = self.add_endpoint("v2/cryptocurrency/info");
+        let resp = rb.query(&[("id", &query)]).send().await?;
+
+        match resp.status() {
+            StatusCode::OK => {
+                let root = resp.json::<MDv2>().await?;
+                let map = root.data;
+                Ok(map)
+            }
             code => {
                 let root = resp.json::<ApiError>().await?;
                 Err(CmcErrors::ApiError(format!(
