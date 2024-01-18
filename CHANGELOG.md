@@ -11,8 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## 0.4.1 - 2024-01-18
+### Added
+- `base_url()`
+- `metadata_map()`
+- async `metadata_map()`
+- Unit test
 
-### 0.4.0 - 2023-09-01
+## 0.4.0 - 2023-09-01
 ### Added
 - Async implementation (feature `async`)
 - Minor fixes
@@ -20,9 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.3.0 - 2022-12-20
 ### Added
- - Default features
- - `fiat_id_map()`
- - Documentation
+- Default features
+- `fiat_id_map()`
+- Documentation
 
 ### Changed
 - Deprecated `id_map_fiat()`
