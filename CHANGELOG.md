@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## 0.4.3 - 2024-03-08
+### Changed
+- Visibility type `CmcResult`
+- field type `price` for `cmc::api::cryptocurrency::quotes_latest_v2::Currency`
+- fn `price_by_id()`
+- fn `price_by_slug()`
+- fn `price_by_symbol()`
+- Unit tests
+
 ## 0.4.1 - 2024-01-18
 ### Added
 - `base_url()`
