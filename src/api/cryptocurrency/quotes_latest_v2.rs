@@ -62,7 +62,7 @@ pub struct Tag {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Currency {
-    pub price: f64,
+    pub price: Option<f64>,
     pub volume_24h: Value,
     pub volume_change_24h: Value,
     pub percent_change_1h: Value,
