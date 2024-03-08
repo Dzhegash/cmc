@@ -440,12 +440,16 @@ impl Cmc {
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<QLv2Symbol>()?;
-                let price = root.data.get(&symbol.to_uppercase()).unwrap()[0]
+                if let Some(price) = root.data.get(&symbol.to_uppercase()).unwrap()[0]
                     .quote
                     .get(currency)
                     .unwrap()
-                    .price;
-                Ok(price)
+                    .price
+                {
+                    Ok(price)
+                } else {
+                    Err(CmcErrors::NullAnswer)
+                }
             }
             code => {
                 let root = resp.json::<ApiError>()?;
