@@ -402,15 +402,19 @@ impl Cmc {
             StatusCode::OK => {
                 let root = resp.json::<QLv2Slug>()?;
                 let slug_id = root.data.iter().next().unwrap().0;
-                let price = root
+                if let Some(price) = root
                     .data
                     .get(slug_id)
                     .unwrap()
                     .quote
                     .get(currency)
                     .unwrap()
-                    .price;
-                Ok(price)
+                    .price
+                {
+                    Ok(price)
+                } else {
+                    Err(CmcErrors::NullAnswer)
+                }
             }
             code => {
                 let root = resp.json::<ApiError>()?;
