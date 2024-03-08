@@ -363,15 +363,19 @@ impl Cmc {
         match resp.status() {
             StatusCode::OK => {
                 let root = resp.json::<QLv2Id>()?;
-                let price = root
+                if let Some(price) = root
                     .data
                     .get(id)
                     .unwrap()
                     .quote
                     .get(currency)
                     .unwrap()
-                    .price;
-                Ok(price)
+                    .price
+                {
+                    Ok(price)
+                } else {
+                    Err(CmcErrors::NullAnswer)
+                }
             }
             code => {
                 let root = resp.json::<ApiError>()?;
