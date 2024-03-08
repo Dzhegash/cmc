@@ -14,7 +14,8 @@ mod deserialize_tests {
             .quote
             .get("USD")
             .unwrap()
-            .price;
+            .price
+            .unwrap();
 
         assert_eq!(price, 21864.74930690019);
     }
@@ -31,7 +32,8 @@ mod deserialize_tests {
             .quote
             .get("USD")
             .unwrap()
-            .price;
+            .price
+            .unwrap();
 
         assert_eq!(price, 21847.757042255787);
     }
@@ -44,7 +46,8 @@ mod deserialize_tests {
             .quote
             .get("USD")
             .unwrap()
-            .price;
+            .price
+            .unwrap();
 
         assert_eq!(price, 21871.88352845583);
     }
@@ -231,7 +234,8 @@ mod network_tests {
             .quote
             .get("USD")
             .unwrap()
-            .price;
+            .price
+            .unwrap();
 
         assert!(price > 0.1);
     }
@@ -248,7 +252,8 @@ mod network_tests {
             .quote
             .get("USD")
             .unwrap()
-            .price;
+            .price
+            .unwrap();
 
         assert!(price > 0.1);
     }
@@ -265,7 +270,8 @@ mod network_tests {
             .quote
             .get("USD")
             .unwrap()
-            .price;
+            .price
+            .unwrap();
 
         assert!(price > 0.1);
     }
