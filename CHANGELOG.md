@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## 0.4.4 - 2024-03-11
+### Changed
+- async fn `price_by_id()`
+- async fn `price_by_slug()`
+- async fn `price_by_symbol()`
+
 ## 0.4.3 - 2024-03-08
 ### Changed
 - Visibility type `CmcResult`
